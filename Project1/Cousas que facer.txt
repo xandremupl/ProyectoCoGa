@@ -1,0 +1,7 @@
+Simulador de construcción
+
+- Construcción a base de cubos.
+- Estructuras personalizadas.
+- Menú click dereito: Elegir objeto, elegir textura, iluminación...
+- Mover e rotar obxectos
+- Colisións
