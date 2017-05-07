@@ -4,4 +4,6 @@ Simulador de construcción
 - Estructuras personalizadas.
 - Menú click dereito: Elegir objeto, elegir textura, iluminación...
 - Mover e rotar obxectos
-- Colisións
+- Colisións (Igual temos un problema cas colisións, porque o inicializar un objeto, si o espacio no que se inicializa
+o ocupou o usuario podería fallar, temos que mirar de que o objeto que se inicializa e ainda non se colocou
+non teña a colisión implementada hasta que o usuario lle de a Enter para colocalo ou algo así)

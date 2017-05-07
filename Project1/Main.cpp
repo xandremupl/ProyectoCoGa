@@ -78,18 +78,17 @@ Objeto inicializarObjeto(float px, float py, float pz, float rx, float ry, float
 }
 
 void debuxarObjeto(Objeto objeto) {
-
+	glTranslatef(objeto.px, objeto.py, objeto.pz);
+	glRotatef(objeto.rx, 1.0f, 0.0f, 0.0f);
+	glRotatef(objeto.ry, 0.0f, 1.0f, 0.0f);
+	glRotatef(objeto.rz, 0.0f, 0.0f, 1.0f);
+	glScalef(objeto.sx, objeto.sy, objeto.sz);
+	glCallList(objeto.listaRender);
 }
-
-Objeto base;
-Objeto esfBase;
-Objeto mastil;
-Objeto esfTope;
-Objeto tope;
 
 // Funcion de dibukop
 void myDisplay(void) {
-
+	int i;
 
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the window with current clearing color
@@ -100,12 +99,25 @@ void myDisplay(void) {
 	glMatrixMode(GL_MODELVIEW);
 	// Inicializamos la matriz del modelo a la identidad
 	glLoadIdentity();
+	printf("objetos.size() = %d\n", objetos.size());
+	if (objetos.size() > 0) {
+		for (i = 0; i < objetos.size(); i++) {
+			glPushMatrix();
 
-	glPushMatrix();
+			glColor3f(1.0f, 1.0f, 1.0f);
+			if (i == (objetos.size() - 1)) {
+				objetos[i].px = moverX;
+				objetos[i].py = moverY;
+				objetos[i].pz = moverZ;
+				objetos[i].rx = rotarX;
+				objetos[i].ry = rotarY;
+				objetos[i].rz = rotarZ;
+			}
+			debuxarObjeto(objetos[i]);
 
-
-
-	glPopMatrix();
+			glPopMatrix();
+		}
+	}
 
 	glFlush();
 	glutSwapBuffers();
@@ -125,18 +137,10 @@ int main(int argc, char **argv) {
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
 	// Nombre de la ventana
 	glutCreateWindow("Ventana con el Visual C++ y glut");
-	// llamada a la funcion de dibujo
 	//Incializacion listas
 	cuadrado = myCuadrado();
 	cubo = myCubo();
 	esfera = myEsfera();
-
-	//Inicializacion objetos
-	/*base = inicializarObjeto(0.0f, 0.0f, -30.0f, 0.0f, 0.0f, 60.0f, 20.0f, 60.0f, cubo);
-	esfBase = inicializarObjeto(0.0f, 7.0f, 0.0f, 0.0f, 0.0f, 10.0f, 10.0f, 10.0f, esfera);
-	mastil = inicializarObjeto(0.0f, 20.0f, -2.5f, 0.0f, 0.0f, 4.0f, 50.0f, 4.0f, cubo);
-	esfTope = inicializarObjeto(0.0f, 43.0f, 0.0f, 0.0f, 0.0f, 6.0f, 6.0f, 6.0f, esfera);
-	tope = inicializarObjeto(0.0f, 10.0f, -1.0f, 0.0f, 0.0f, 2.0f, 20.0f, 2.0f, cubo);*/
 
 	// Detectar profundidad de obxetos y no dibujar caras ocultas
 	glClearDepth(1.0f);
@@ -197,7 +201,16 @@ void crearMenu(int item) {
 	case MENU_ILUMINACION:
 		break;
 	case CUBO:
-		objetos.push_back(inicializarObjeto(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, glCallList(cubo)));
+		//Estas asignacions son para que apareza no origen, temos que decidir si facer asi ou que apareza superposto
+		//ao ultimo objeto
+		moverX = 0.0f;
+		moverY = 0.0f;
+		moverZ = 0.0f;
+		rotarX = 0.0f;
+		rotarY = 0.0f;
+		rotarZ = 0.0f;
+		objetos.push_back(inicializarObjeto(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 5.0f, 5.0f, 5.0f, cubo));
+		break;
 	default:
 		break;
 	}
