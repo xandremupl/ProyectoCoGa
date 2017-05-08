@@ -5,6 +5,7 @@
 #include <GL/glu.h>	
 #include <stdio.h>
 #include <math.h>	//Inclusion de librerias auxiliares	
+
 #define INCREMENTO .01
 #define INCRANG .5
 #define INCMOV 1.0

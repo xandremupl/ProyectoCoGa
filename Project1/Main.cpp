@@ -124,7 +124,64 @@ void myDisplay(void) {
 
 }
 
-void crearMenu(int);
+void crearMenu(int item) {
+	switch (item) {
+	case MENU_PRINCIPAL:
+		break;
+	case MENU_OBJETOS:
+		break;
+	case MENU_TEXTURAS:
+		break;
+	case MENU_ILUMINACION:
+		break;
+	case CUBO:
+		//Estas asignacions son para que apareza no origen, temos que decidir si facer asi ou que apareza superposto
+		//ao ultimo objeto
+		moverX = 0.0f;
+		moverY = 0.0f;
+		moverZ = 0.0f;
+		rotarX = 0.0f;
+		rotarY = 0.0f;
+		rotarZ = 0.0f;
+		objetos.push_back(inicializarObjeto(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 5.0f, 5.0f, 5.0f, cubo));
+		break;
+	default:
+		break;
+	}
+	glutPostRedisplay();
+
+	return;
+}
+
+void menus() {
+	int menuObjetos = glutCreateMenu(crearMenu);
+
+	glutAddMenuEntry("Cubo", CUBO);
+	glutAddMenuEntry("Personalizado 1", USER1);
+	glutAddMenuEntry("Personalizado 2", USER2);
+
+	//Creacion del submenu de texturas
+	int menuTexturas = glutCreateMenu(crearMenu);
+
+	glutAddMenuEntry("Cemento", CEMENTO);
+	glutAddMenuEntry("Cristal", CRISTAL);
+	glutAddMenuEntry("Hierba", HIERBA);
+
+	//Creacion del submenu de iluminacion
+	int menuIluminacion = glutCreateMenu(crearMenu);
+
+	glutAddMenuEntry("Luz 1", LUZ1);
+	glutAddMenuEntry("Luz 2", LUZ2);
+	glutAddMenuEntry("Luz 3", LUZ3);
+
+	//Creacion del menu principal
+	int menuPrincipal = glutCreateMenu(crearMenu);
+
+	glutAddSubMenu("Objetos", MENU_OBJETOS);
+	glutAddSubMenu("Texturas", MENU_TEXTURAS);
+	glutAddSubMenu("Iluminación", MENU_ILUMINACION);
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
+}
 
 int main(int argc, char **argv) {
 
@@ -158,63 +215,10 @@ int main(int argc, char **argv) {
 	// Color con el que se limpian los buffer
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	//Creacion del submenu de objetos
-	int menuObjetos = glutCreateMenu(crearMenu);
+	menus();
 
-	glutAddMenuEntry("Cubo", CUBO);
-	glutAddMenuEntry("Personalizado 1", USER1);
-	glutAddMenuEntry("Personalizado 2", USER2);
-
-	//Creacion del submenu de texturas
-	int menuTexturas = glutCreateMenu(crearMenu);
-
-	glutAddMenuEntry("Cemento", CEMENTO);
-	glutAddMenuEntry("Cristal", CRISTAL);
-	glutAddMenuEntry("Hierba", HIERBA);
-
-	//Creacion del submenu de iluminacion
-	int menuIluminacion = glutCreateMenu(crearMenu);
-
-	glutAddMenuEntry("Luz 1", LUZ1);
-	glutAddMenuEntry("Luz 2", LUZ2);
-	glutAddMenuEntry("Luz 3", LUZ3);
-
-	//Creacion del menu principal
-	int menuPrincipal = glutCreateMenu(crearMenu);
-
-	glutAddSubMenu("Objetos", MENU_OBJETOS);
-	glutAddSubMenu("Texturas", MENU_TEXTURAS);
-	glutAddSubMenu("Iluminación", MENU_ILUMINACION);
-	glutAttachMenu(GLUT_RIGHT_BUTTON);
 	// Empieza en bucle principal
 	glutMainLoop();
 	return 0;
 }
 
-void crearMenu(int item) {
-	switch (item) {
-	case MENU_PRINCIPAL:
-		break;
-	case MENU_OBJETOS:
-		break;
-	case MENU_TEXTURAS:
-		break;
-	case MENU_ILUMINACION:
-		break;
-	case CUBO:
-		//Estas asignacions son para que apareza no origen, temos que decidir si facer asi ou que apareza superposto
-		//ao ultimo objeto
-		moverX = 0.0f;
-		moverY = 0.0f;
-		moverZ = 0.0f;
-		rotarX = 0.0f;
-		rotarY = 0.0f;
-		rotarZ = 0.0f;
-		objetos.push_back(inicializarObjeto(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 5.0f, 5.0f, 5.0f, cubo));
-		break;
-	default:
-		break;
-	}
-	glutPostRedisplay();
-
-	return;
-}
