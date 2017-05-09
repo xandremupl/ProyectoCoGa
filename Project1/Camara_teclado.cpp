@@ -4,13 +4,14 @@
 #include <GL/gl.h>		//Inclusion de GL		 	
 #include <GL/glu.h>	
 #include <stdio.h>
-#include <math.h>	//Inclusion de librerias auxiliares	
+#include <math.h>	//Inclusion de librerias auxiliares
+#include "Camara_teclado.h"
 
-#define INCREMENTO .01
+/*#define INCREMENTO .01
 #define INCRANG .5
 #define INCMOV 1.0
 #define DISTANCIA 50
-#define PI 3.1416
+#define PI 3.1416*/
 
 float rotarX = 0;
 float rotarY = 0;

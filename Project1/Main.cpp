@@ -6,6 +6,7 @@
 #include <vector>
 #include <stdio.h>
 #include <math.h>	//Inclusion de librerias auxiliares	
+#include "Camara_teclado.h"
 const int W_WIDTH = 500;	 //Ancho de la ventana
 const int W_HEIGHT = 500;		//Alto de la ventana
 
@@ -15,6 +16,7 @@ int esfera;
 
 
 #define GL_PI 3.14f
+
 
 // Ángulos de rotación
 //static GLfloat xRot = 0.0f;
@@ -29,9 +31,6 @@ extern float moverY;
 extern float moverZ;
 
 //Funciones externas
-extern void myCamara();
-extern void myTeclado(unsigned char tras, int x, int y);
-extern void myTeclasespeciales(int cursor, int x, int y);
 extern int myCuadrado();
 extern int myCubo();
 extern int myEsfera();
@@ -60,6 +59,7 @@ typedef struct {
 } Objeto;
 
 std::vector<Objeto> objetos;
+Objeto aux;
 
 Objeto inicializarObjeto(float px, float py, float pz, float rx, float ry, float rz, float sx,
 	float sy, float sz, int listaRender) {
@@ -86,9 +86,36 @@ void debuxarObjeto(Objeto objeto) {
 	glCallList(objeto.listaRender);
 }
 
+GLboolean comprobarColision(Objeto obj1, Objeto obj2) {
+	bool colisionX = (obj1.px + obj1.sx > obj2.px) && (obj2.px + obj2.sx > obj1.px);
+	bool colisionY = (obj1.py + obj1.sy > obj2.py) && (obj2.py + obj2.sy > obj1.py);
+	bool colisionZ = (obj1.pz + obj1.sz > obj2.pz) && (obj2.pz + obj2.sz > obj1.pz);
+
+	return(colisionX && colisionY && colisionZ);
+}
+
+void modColExtern() {
+	moverX = objetos[objetos.size() - 1].px;
+	moverY = objetos[objetos.size() - 1].py;
+	moverZ = objetos[objetos.size() - 1].pz;
+	rotarX = objetos[objetos.size() - 1].rx;
+	rotarY = objetos[objetos.size() - 1].ry;
+	rotarZ = objetos[objetos.size() - 1].rz;
+}
+
+void modColObjeto() {
+	objetos[objetos.size() - 1].px = moverX;
+	objetos[objetos.size() - 1].py = moverY;
+	objetos[objetos.size() - 1].pz = moverZ;
+	objetos[objetos.size() - 1].rx = rotarX;
+	objetos[objetos.size() - 1].ry = rotarY;
+	objetos[objetos.size() - 1].rz = rotarZ;
+}
+
 // Funcion de dibukop
 void myDisplay(void) {
 	int i;
+	GLboolean colision=FALSE;
 
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the window with current clearing color
@@ -99,24 +126,36 @@ void myDisplay(void) {
 	glMatrixMode(GL_MODELVIEW);
 	// Inicializamos la matriz del modelo a la identidad
 	glLoadIdentity();
-	printf("objetos.size() = %d\n", objetos.size());
 	if (objetos.size() > 0) {
-		for (i = 0; i < objetos.size(); i++) {
+		for (i = 0; i < objetos.size() - 1; i++) {
 			glPushMatrix();
 
 			glColor3f(1.0f, 1.0f, 1.0f);
-			if (i == (objetos.size() - 1)) {
-				objetos[i].px = moverX;
-				objetos[i].py = moverY;
-				objetos[i].pz = moverZ;
-				objetos[i].rx = rotarX;
-				objetos[i].ry = rotarY;
-				objetos[i].rz = rotarZ;
-			}
 			debuxarObjeto(objetos[i]);
 
 			glPopMatrix();
 		}
+
+		glPushMatrix();
+
+		glColor3f(1.0f, 1.0f, 1.0f);
+		aux = inicializarObjeto(moverX, moverY, moverZ, rotarX, rotarY, rotarZ, objetos[objetos.size() - 1].sx,
+			objetos[objetos.size() - 1].sy, objetos[objetos.size() - 1].sz, objetos[objetos.size() - 1].listaRender);
+
+		for (i = 0; i < objetos.size() - 1; i++) {
+			colision = (comprobarColision(aux, objetos[i]));
+			if (colision == TRUE) {
+				modColExtern();
+				break;
+			}
+		}
+		if (colision == FALSE) {
+			modColObjeto();
+		}
+
+		debuxarObjeto(objetos[objetos.size() - 1]);
+
+		glPopMatrix();
 	}
 
 	glFlush();
