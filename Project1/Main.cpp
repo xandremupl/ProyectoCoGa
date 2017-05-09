@@ -171,11 +171,15 @@ void myDisplay(void) {
 
 	glPushMatrix();
 
-	//glCullFace(GL_BACK);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glColor3f(color[0], color[1], color[2]);
+	glTranslatef(0.0f, 0.0f, objFondo.base.pz);
 	glCallList(fondo);
 
 	glPopMatrix();
+
+
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	if (objetos.size() > 0) {
 		for (i = 0; i < objetos.size() - 1; i++) {
@@ -191,10 +195,6 @@ void myDisplay(void) {
 
 		glColor3f(1.0f, 1.0f, 1.0f);
 		asignarParametros();
-		printf("Externas: (%f, %f, %f)", escalarX, escalarY, escalarZ);
-		printf("(%f, %f, %f), (%f, %f, %f)\n", objetos[objetos.size() - 1].base.px, objetos[objetos.size() - 1].base.py,
-			objetos[objetos.size() - 1].base.pz, objetos[objetos.size() - 1].base.sx, objetos[objetos.size() - 1].base.sy,
-			objetos[objetos.size() - 1].base.sz);
 		dibujarObjeto(objetos[objetos.size() - 1]);
 		glPopMatrix();
 	}
@@ -266,7 +266,6 @@ void crearMenu(int item) {
 	default:
 		break;
 	}
-	printf("Tamano objetos: %d\n", objetos.size());
 	glutPostRedisplay();
 
 	return;

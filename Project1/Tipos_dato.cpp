@@ -28,7 +28,7 @@ int myFondo() {
 	indice = glGenLists(1);
 	glNewList(indice, GL_COMPILE);
 
-	glScalef(150.0f, 150.0f, 150.0f);
+	glScalef(250.0f, 250.0f, 250.0f);
 	//Cara Fron
 	glBegin(GL_TRIANGLES);
 	glVertex3f(-.5f, -0.5f, .5f);
