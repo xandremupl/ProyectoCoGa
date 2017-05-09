@@ -23,15 +23,15 @@ int esfera;
 //static GLfloat yRot = 0.0f;
 
 //Variables externas
-extern float rotarX;
-extern float rotarY;
-extern float rotarZ;
-extern float moverX;
-extern float moverY;
-extern float moverZ;
-extern float escalarX;
-extern float escalarY;
-extern float escalarZ;
+float *rotarX;
+float *rotarY;
+float *rotarZ;
+float *moverX;
+float *moverY;
+float *moverZ;
+float *escalarX;
+float *escalarY;
+float *escalarZ;
 
 //Funciones externas
 extern int myCuadrado();
@@ -129,15 +129,15 @@ void dibujarObjeto(Objeto objeto) {
 }
 
 void asignarParametros() {
-	objetos[objetos.size() - 1].base.px = moverX;
-	objetos[objetos.size() - 1].base.py = moverY;
-	objetos[objetos.size() - 1].base.pz = moverZ;
-	objetos[objetos.size() - 1].base.rx = rotarX;
-	objetos[objetos.size() - 1].base.ry = rotarY;
-	objetos[objetos.size() - 1].base.rz = rotarZ;
-	objetos[objetos.size() - 1].base.sx = escalarX;
-	objetos[objetos.size() - 1].base.sy = escalarY;
-	objetos[objetos.size() - 1].base.sz = escalarZ;
+	moverX = &(objetos[objetos.size() - 1].base.px);
+	moverY = &(objetos[objetos.size() - 1].base.py);
+	moverZ = &(objetos[objetos.size() - 1].base.pz);
+	rotarX = &(objetos[objetos.size() - 1].base.rx);
+	rotarY = &(objetos[objetos.size() - 1].base.ry);
+	rotarZ = &(objetos[objetos.size() - 1].base.rz);
+	escalarX = &(objetos[objetos.size() - 1].base.sx);
+	escalarY = &(objetos[objetos.size() - 1].base.sy);
+	escalarZ = &(objetos[objetos.size() - 1].base.sz);
 }
 
 // Funcion de dibukop
@@ -180,18 +180,6 @@ void myDisplay(void) {
 
 }
 
-void resetMov() {
-	moverX = 0.0f;
-	moverY = 0.0f;
-	moverZ = 0.0f;
-	rotarX = 0.0f;
-	rotarY = 0.0f;
-	rotarZ = 0.0f;
-	escalarX = 5.0f;
-	escalarY = 5.0f;
-	escalarZ = 5.0f;
-}
-
 void colocarPersonalizado(int indice) {
 	if (usrUsado[indice] == TRUE) {		//Sirve para comprobar si Pers[indice] tiene algo
 		//resetMov();
@@ -210,9 +198,8 @@ void crearMenu(int item) {
 	case CUBO:
 		//Estas asignacions son para que apareza no origen, temos que decidir si facer asi ou que apareza superposto
 		//ao ultimo objeto
-		resetMov();
 		objetos.push_back(inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-			5.0f, 5.0f, 5.0f, cubo)));
+			1.0f, 1.0f, 1.0f, cubo)));
 		break;
 	case PARAR_MACRO:
 		if (indUser <= -1) {
