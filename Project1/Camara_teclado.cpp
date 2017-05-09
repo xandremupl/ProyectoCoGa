@@ -26,7 +26,7 @@ void myCamara() {
 	glMatrixMode(GL_PROJECTION);
 	//La ponemos a uno
 	glLoadIdentity();
-	glOrtho(-100.0, 100.0f, -100.0, 100.0f, -100.0, 1000.0f);
+	glOrtho(-100.0, 100.0f, -100.0, 100.0f, -100.0, 900.0f);
 	gluLookAt(((float)DISTANCIA*(float)sin(alpha)*cos(beta)), ((float)DISTANCIA*(float)sin(beta)), ((float)DISTANCIA*cos(alpha)*cos(beta)), 0, 0, 0, 0, 1, 0);
 
 }
