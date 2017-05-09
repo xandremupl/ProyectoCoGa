@@ -182,7 +182,6 @@ void myDisplay(void) {
 
 void colocarPersonalizado(int indice) {
 	if (usrUsado[indice] == TRUE) {		//Sirve para comprobar si Pers[indice] tiene algo
-		//resetMov();
 		objetos.push_back(Pers[indice]);	//Colocamos objeto personalizado [indice]
 	}
 }
