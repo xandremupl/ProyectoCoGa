@@ -7,18 +7,15 @@
 #include <math.h>	//Inclusion de librerias auxiliares
 #include "Camara_teclado.h"
 
-/*#define INCREMENTO .01
-#define INCRANG .5
-#define INCMOV 1.0
-#define DISTANCIA 50
-#define PI 3.1416*/
-
 float rotarX = 0;
 float rotarY = 0;
 float rotarZ = 0;
 float moverX = 0;
 float moverY = 0;
 float moverZ = 0;
+float escalarX = 5;
+float escalarY = 5;
+float escalarZ = 5;
 
 float alpha = 0;
 float beta = 0;
@@ -29,7 +26,7 @@ void myCamara() {
 	glMatrixMode(GL_PROJECTION);
 	//La ponemos a uno
 	glLoadIdentity();
-	glOrtho(-100.0, 100.0f, -100.0, 100.0f, -100.0, 100.0f);
+	glOrtho(-100.0, 100.0f, -100.0, 100.0f, -100.0, 1000.0f);
 	gluLookAt(((float)DISTANCIA*(float)sin(alpha)*cos(beta)), ((float)DISTANCIA*(float)sin(beta)), ((float)DISTANCIA*cos(alpha)*cos(beta)), 0, 0, 0, 0, 1, 0);
 
 }
@@ -72,6 +69,24 @@ void myTeclado(unsigned char tras, int x, int y)
 		break;
 	case 'o':
 		moverZ += INCMOV;
+		break;
+	case 'f':
+		escalarX -= INCESC;
+		break;
+	case 'g':
+		escalarY -= INCESC;
+		break;
+	case 'h':
+		escalarZ -= INCESC;
+		break;
+	case 'r':
+		escalarX += INCESC;
+		break;
+	case 't':
+		escalarY += INCESC;
+		break;
+	case 'y':
+		escalarZ += INCESC;
 		break;
 	case 27:
 		exit(0);

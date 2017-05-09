@@ -93,7 +93,6 @@ int myCubo()
 
 	glEnd();
 
-
 	glEndList();
 
 	return indice;

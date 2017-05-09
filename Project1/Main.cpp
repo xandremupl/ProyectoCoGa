@@ -29,6 +29,9 @@ extern float rotarZ;
 extern float moverX;
 extern float moverY;
 extern float moverZ;
+extern float escalarX;
+extern float escalarY;
+extern float escalarZ;
 
 //Funciones externas
 extern int myCuadrado();
@@ -36,10 +39,6 @@ extern int myCubo();
 extern int myEsfera();
 
 enum TIPO_MENU {
-	MENU_PRINCIPAL,
-	MENU_OBJETOS,
-	MENU_TEXTURAS,
-	MENU_ILUMINACION,
 	CUBO,
 	USER1,
 	USER2,
@@ -49,6 +48,9 @@ enum TIPO_MENU {
 	LUZ1,
 	LUZ2,
 	LUZ3,
+	PARAR_MACRO,
+	GMUSR1,
+	GMUSR2,
 };
 
 typedef struct {
@@ -56,14 +58,25 @@ typedef struct {
 	float rx, ry, rz; // angulos de giro
 	float sx, sy, sz; // escalado en los tres ejes.
 	int listaRender; // lista de render
-} Objeto;
+} ObjBase;
+
+struct Objeto {
+	ObjBase base;
+	std::vector<Objeto> hijos;
+};
+
+typedef struct Objeto Objeto;
 
 std::vector<Objeto> objetos;
-Objeto aux;
+ObjBase aux;
+Objeto Pers[2];
+GLboolean usrUsado[2];
+int grabacion;	//Variable para hacer posibles las grabaciones
+int indUser = -1;	//Indice de la macro grabada (-1 significa sin grabar)
 
-Objeto inicializarObjeto(float px, float py, float pz, float rx, float ry, float rz, float sx,
+ObjBase inicializarObjBase(float px, float py, float pz, float rx, float ry, float rz, float sx,
 	float sy, float sz, int listaRender) {
-	Objeto objeto;
+	ObjBase objeto;
 	objeto.px = px;
 	objeto.py = py;
 	objeto.pz = pz;
@@ -77,45 +90,59 @@ Objeto inicializarObjeto(float px, float py, float pz, float rx, float ry, float
 	return(objeto);
 }
 
-void debuxarObjeto(Objeto objeto) {
-	glTranslatef(objeto.px, objeto.py, objeto.pz);
-	glRotatef(objeto.rx, 1.0f, 0.0f, 0.0f);
-	glRotatef(objeto.ry, 0.0f, 1.0f, 0.0f);
-	glRotatef(objeto.rz, 0.0f, 0.0f, 1.0f);
-	glScalef(objeto.sx, objeto.sy, objeto.sz);
-	glCallList(objeto.listaRender);
+Objeto inicializarObjeto(ObjBase objBase) {
+	Objeto obj;
+	obj.base = objBase;
+	return(obj);
 }
 
-GLboolean comprobarColision(Objeto obj1, Objeto obj2) {
-	bool colisionX = (obj1.px + obj1.sx > obj2.px) && (obj2.px + obj2.sx > obj1.px);
-	bool colisionY = (obj1.py + obj1.sy > obj2.py) && (obj2.py + obj2.sy > obj1.py);
-	bool colisionZ = (obj1.pz + obj1.sz > obj2.pz) && (obj2.pz + obj2.sz > obj1.pz);
-
-	return(colisionX && colisionY && colisionZ);
+void dibujarObjeto(Objeto objeto) {
+	int i;
+	ObjBase* base = &(objeto.base);
+	
+	//Comprobamos si es un nodo hoja o no
+	if (objeto.hijos.size() == 0) {	//Obj no tiene hijos
+		//Aplicamos transformaciones
+		glPushMatrix();
+			glTranslatef(base->px, base->py, base->pz);
+			glRotatef(base->rx, 1.0f, 0.0f, 0.0f);
+			glRotatef(base->ry, 0.0f, 1.0f, 0.0f);
+			glRotatef(base->rz, 0.0f, 0.0f, 1.0f);
+			glScalef(base->sx, base->sy, base->sz);
+			//glScalef(1.0f, 1.0f, 1.0f);
+			glCallList(base->listaRender);
+		glPopMatrix();
+	}
+	else {
+		for (i = 0; i < objeto.hijos.size(); i++) {
+			//Aplicamos transformaciones
+			glPushMatrix();
+				glTranslatef(base->px, base->py, base->pz);
+				glRotatef(base->rx, 1.0f, 0.0f, 0.0f);
+				glRotatef(base->ry, 0.0f, 1.0f, 0.0f);
+				glRotatef(base->rz, 0.0f, 0.0f, 1.0f);
+				glScalef(base->sx, base->sy, base->sz);
+				dibujarObjeto(objeto.hijos[i]);
+			glPopMatrix();
+		}
+	}
 }
 
-void modColExtern() {
-	moverX = objetos[objetos.size() - 1].px;
-	moverY = objetos[objetos.size() - 1].py;
-	moverZ = objetos[objetos.size() - 1].pz;
-	rotarX = objetos[objetos.size() - 1].rx;
-	rotarY = objetos[objetos.size() - 1].ry;
-	rotarZ = objetos[objetos.size() - 1].rz;
-}
-
-void modColObjeto() {
-	objetos[objetos.size() - 1].px = moverX;
-	objetos[objetos.size() - 1].py = moverY;
-	objetos[objetos.size() - 1].pz = moverZ;
-	objetos[objetos.size() - 1].rx = rotarX;
-	objetos[objetos.size() - 1].ry = rotarY;
-	objetos[objetos.size() - 1].rz = rotarZ;
+void asignarParametros() {
+	objetos[objetos.size() - 1].base.px = moverX;
+	objetos[objetos.size() - 1].base.py = moverY;
+	objetos[objetos.size() - 1].base.pz = moverZ;
+	objetos[objetos.size() - 1].base.rx = rotarX;
+	objetos[objetos.size() - 1].base.ry = rotarY;
+	objetos[objetos.size() - 1].base.rz = rotarZ;
+	objetos[objetos.size() - 1].base.sx = escalarX;
+	objetos[objetos.size() - 1].base.sy = escalarY;
+	objetos[objetos.size() - 1].base.sz = escalarZ;
 }
 
 // Funcion de dibukop
 void myDisplay(void) {
 	int i;
-	GLboolean colision=FALSE;
 
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the window with current clearing color
@@ -131,7 +158,7 @@ void myDisplay(void) {
 			glPushMatrix();
 
 			glColor3f(1.0f, 1.0f, 1.0f);
-			debuxarObjeto(objetos[i]);
+			dibujarObjeto(objetos[i]);
 
 			glPopMatrix();
 		}
@@ -139,22 +166,12 @@ void myDisplay(void) {
 		glPushMatrix();
 
 		glColor3f(1.0f, 1.0f, 1.0f);
-		aux = inicializarObjeto(moverX, moverY, moverZ, rotarX, rotarY, rotarZ, objetos[objetos.size() - 1].sx,
-			objetos[objetos.size() - 1].sy, objetos[objetos.size() - 1].sz, objetos[objetos.size() - 1].listaRender);
-
-		for (i = 0; i < objetos.size() - 1; i++) {
-			colision = (comprobarColision(aux, objetos[i]));
-			if (colision == TRUE) {
-				modColExtern();
-				break;
-			}
-		}
-		if (colision == FALSE) {
-			modColObjeto();
-		}
-
-		debuxarObjeto(objetos[objetos.size() - 1]);
-
+		asignarParametros();
+		printf("Externas: (%f, %f, %f)", escalarX, escalarY, escalarZ);
+		printf("(%f, %f, %f), (%f, %f, %f)\n", objetos[objetos.size() - 1].base.px, objetos[objetos.size() - 1].base.py,
+			objetos[objetos.size() - 1].base.pz, objetos[objetos.size() - 1].base.sx, objetos[objetos.size() - 1].base.sy,
+			objetos[objetos.size() - 1].base.sz);
+		dibujarObjeto(objetos[objetos.size() - 1]);
 		glPopMatrix();
 	}
 
@@ -163,30 +180,65 @@ void myDisplay(void) {
 
 }
 
+void resetMov() {
+	moverX = 0.0f;
+	moverY = 0.0f;
+	moverZ = 0.0f;
+	rotarX = 0.0f;
+	rotarY = 0.0f;
+	rotarZ = 0.0f;
+	escalarX = 5.0f;
+	escalarY = 5.0f;
+	escalarZ = 5.0f;
+}
+
+void colocarPersonalizado(int indice) {
+	if (usrUsado[indice] == TRUE) {		//Sirve para comprobar si Pers[indice] tiene algo
+		//resetMov();
+		objetos.push_back(Pers[indice]);	//Colocamos objeto personalizado [indice]
+	}
+}
+
 void crearMenu(int item) {
 	switch (item) {
-	case MENU_PRINCIPAL:
+	case USER1:
+		colocarPersonalizado(0);
 		break;
-	case MENU_OBJETOS:
-		break;
-	case MENU_TEXTURAS:
-		break;
-	case MENU_ILUMINACION:
+	case USER2:
+		colocarPersonalizado(1);
 		break;
 	case CUBO:
 		//Estas asignacions son para que apareza no origen, temos que decidir si facer asi ou que apareza superposto
 		//ao ultimo objeto
-		moverX = 0.0f;
-		moverY = 0.0f;
-		moverZ = 0.0f;
-		rotarX = 0.0f;
-		rotarY = 0.0f;
-		rotarZ = 0.0f;
-		objetos.push_back(inicializarObjeto(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 5.0f, 5.0f, 5.0f, cubo));
+		resetMov();
+		objetos.push_back(inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			5.0f, 5.0f, 5.0f, cubo)));
+		break;
+	case PARAR_MACRO:
+		if (indUser <= -1) {
+			return;
+		}
+		Pers[indUser] = inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, NULL));
+		//Itera por los objetos añadidos al vector objetos para guardarlos en la superestructura (Objeto Pers) y hace pop de ellos
+		for (objetos.size(); objetos.size() > grabacion;) {
+			Pers[indUser].hijos.push_back(objetos[objetos.size()-1]);	//Metemos el objeto mas externo en Pers
+			objetos.pop_back();	//Y lo eliminamos de objetos
+		}
+		usrUsado[indUser] = TRUE; //Indica que Pers[indUser] tiene algo
+		indUser = -1;	//Pone la variable de macro a "Sin grabacion"
+		break;
+	case GMUSR1:
+		indUser = 0;	//Guardo el indice de la macro que se esta grabando
+		grabacion = objetos.size();	//Guardamos el numero de objetos que habia en escena cuando empezamos a grabar
+		break;
+	case GMUSR2:
+		indUser = 1;
+		grabacion = objetos.size();	//Guardamos el numero de objetos que habia en escena cuando empezamos a grabar
 		break;
 	default:
 		break;
 	}
+	printf("Tamano objetos: %d\n", objetos.size());
 	glutPostRedisplay();
 
 	return;
@@ -213,12 +265,24 @@ void menus() {
 	glutAddMenuEntry("Luz 2", LUZ2);
 	glutAddMenuEntry("Luz 3", LUZ3);
 
+	int grabarMacro = glutCreateMenu(crearMenu);
+
+	glutAddMenuEntry("Personalizado 1", GMUSR1);
+	glutAddMenuEntry("Personalizado 2", GMUSR2);
+
+
+	int menuMacro = glutCreateMenu(crearMenu);
+
+	glutAddSubMenu("Grabar", grabarMacro);
+	glutAddMenuEntry("Parar", PARAR_MACRO);
+
 	//Creacion del menu principal
 	int menuPrincipal = glutCreateMenu(crearMenu);
 
-	glutAddSubMenu("Objetos", MENU_OBJETOS);
-	glutAddSubMenu("Texturas", MENU_TEXTURAS);
-	glutAddSubMenu("Iluminación", MENU_ILUMINACION);
+	glutAddSubMenu("Objetos", menuObjetos);
+	glutAddSubMenu("Texturas", menuTexturas);
+	glutAddSubMenu("Iluminación", menuIluminacion);
+	glutAddSubMenu("Macros", menuMacro);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
