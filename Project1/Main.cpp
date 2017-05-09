@@ -287,6 +287,7 @@ int main(int argc, char **argv) {
 	cuadrado = myCuadrado();
 	cubo = myCubo();
 	esfera = myEsfera();
+	//Cambio para probar sync
 
 	// Detectar profundidad de obxetos y no dibujar caras ocultas
 	glClearDepth(1.0f);
