@@ -78,12 +78,14 @@ Objeto inicializarObjeto(float px, float py, float pz, float rx, float ry, float
 }
 
 void debuxarObjeto(Objeto objeto) {
-	glTranslatef(objeto.px, objeto.py, objeto.pz);
-	glRotatef(objeto.rx, 1.0f, 0.0f, 0.0f);
-	glRotatef(objeto.ry, 0.0f, 1.0f, 0.0f);
-	glRotatef(objeto.rz, 0.0f, 0.0f, 1.0f);
-	glScalef(objeto.sx, objeto.sy, objeto.sz);
-	glCallList(objeto.listaRender);
+	glPushMatrix();
+		glTranslatef(objeto.px, objeto.py, objeto.pz);
+		glRotatef(objeto.rx, 1.0f, 0.0f, 0.0f);
+		glRotatef(objeto.ry, 0.0f, 1.0f, 0.0f);
+		glRotatef(objeto.rz, 0.0f, 0.0f, 1.0f);
+		glScalef(objeto.sx, objeto.sy, objeto.sz);
+		glCallList(objeto.listaRender);
+	glPopMatrix();
 }
 
 // Funcion de dibukop
