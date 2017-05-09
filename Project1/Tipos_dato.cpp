@@ -29,6 +29,7 @@ int myCubo()
 	indice = glGenLists(1);
 	glNewList(indice, GL_COMPILE);
 
+	//glScalef(5.0f, 5.0f, 5.0f);
 	//Cara Fron
 	glBegin(GL_TRIANGLES);
 	glVertex3f(-.5f, -0.5f, 1.0f);
@@ -92,7 +93,6 @@ int myCubo()
 
 
 	glEnd();
-
 
 	glEndList();
 

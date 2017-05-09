@@ -6,6 +6,7 @@
 #include <vector>
 #include <stdio.h>
 #include <math.h>	//Inclusion de librerias auxiliares	
+#include "Camara_teclado.h"
 const int W_WIDTH = 500;	 //Ancho de la ventana
 const int W_HEIGHT = 500;		//Alto de la ventana
 
@@ -16,31 +17,28 @@ int esfera;
 
 #define GL_PI 3.14f
 
+
 // Ángulos de rotación
 //static GLfloat xRot = 0.0f;
 //static GLfloat yRot = 0.0f;
 
 //Variables externas
-extern float rotarX;
-extern float rotarY;
-extern float rotarZ;
-extern float moverX;
-extern float moverY;
-extern float moverZ;
+float *rotarX;
+float *rotarY;
+float *rotarZ;
+float *moverX;
+float *moverY;
+float *moverZ;
+float *escalarX;
+float *escalarY;
+float *escalarZ;
 
 //Funciones externas
-extern void myCamara();
-extern void myTeclado(unsigned char tras, int x, int y);
-extern void myTeclasespeciales(int cursor, int x, int y);
 extern int myCuadrado();
 extern int myCubo();
 extern int myEsfera();
 
 enum TIPO_MENU {
-	MENU_PRINCIPAL,
-	MENU_OBJETOS,
-	MENU_TEXTURAS,
-	MENU_ILUMINACION,
 	CUBO,
 	USER1,
 	USER2,
@@ -50,6 +48,9 @@ enum TIPO_MENU {
 	LUZ1,
 	LUZ2,
 	LUZ3,
+	PARAR_MACRO,
+	GMUSR1,
+	GMUSR2,
 };
 
 typedef struct {
@@ -57,13 +58,25 @@ typedef struct {
 	float rx, ry, rz; // angulos de giro
 	float sx, sy, sz; // escalado en los tres ejes.
 	int listaRender; // lista de render
-} Objeto;
+} ObjBase;
+
+struct Objeto {
+	ObjBase base;
+	std::vector<Objeto> hijos;
+};
+
+typedef struct Objeto Objeto;
 
 std::vector<Objeto> objetos;
+ObjBase aux;
+Objeto Pers[2];
+GLboolean usrUsado[2];
+int grabacion;	//Variable para hacer posibles las grabaciones
+int indUser = -1;	//Indice de la macro grabada (-1 significa sin grabar)
 
-Objeto inicializarObjeto(float px, float py, float pz, float rx, float ry, float rz, float sx,
+ObjBase inicializarObjBase(float px, float py, float pz, float rx, float ry, float rz, float sx,
 	float sy, float sz, int listaRender) {
-	Objeto objeto;
+	ObjBase objeto;
 	objeto.px = px;
 	objeto.py = py;
 	objeto.pz = pz;
@@ -77,15 +90,54 @@ Objeto inicializarObjeto(float px, float py, float pz, float rx, float ry, float
 	return(objeto);
 }
 
-void debuxarObjeto(Objeto objeto) {
-	glPushMatrix();
-		glTranslatef(objeto.px, objeto.py, objeto.pz);
-		glRotatef(objeto.rx, 1.0f, 0.0f, 0.0f);
-		glRotatef(objeto.ry, 0.0f, 1.0f, 0.0f);
-		glRotatef(objeto.rz, 0.0f, 0.0f, 1.0f);
-		glScalef(objeto.sx, objeto.sy, objeto.sz);
-		glCallList(objeto.listaRender);
-	glPopMatrix();
+Objeto inicializarObjeto(ObjBase objBase) {
+	Objeto obj;
+	obj.base = objBase;
+	return(obj);
+}
+
+void dibujarObjeto(Objeto objeto) {
+	int i;
+	ObjBase* base = &(objeto.base);
+	
+	//Comprobamos si es un nodo hoja o no
+	if (objeto.hijos.size() == 0) {	//Obj no tiene hijos
+		//Aplicamos transformaciones
+		glPushMatrix();
+			glTranslatef(base->px, base->py, base->pz);
+			glRotatef(base->rx, 1.0f, 0.0f, 0.0f);
+			glRotatef(base->ry, 0.0f, 1.0f, 0.0f);
+			glRotatef(base->rz, 0.0f, 0.0f, 1.0f);
+			glScalef(base->sx, base->sy, base->sz);
+			//glScalef(1.0f, 1.0f, 1.0f);
+			glCallList(base->listaRender);
+		glPopMatrix();
+	}
+	else {
+		for (i = 0; i < objeto.hijos.size(); i++) {
+			//Aplicamos transformaciones
+			glPushMatrix();
+				glTranslatef(base->px, base->py, base->pz);
+				glRotatef(base->rx, 1.0f, 0.0f, 0.0f);
+				glRotatef(base->ry, 0.0f, 1.0f, 0.0f);
+				glRotatef(base->rz, 0.0f, 0.0f, 1.0f);
+				glScalef(base->sx, base->sy, base->sz);
+				dibujarObjeto(objeto.hijos[i]);
+			glPopMatrix();
+		}
+	}
+}
+
+void asignarParametros() {
+	moverX = &(objetos[objetos.size() - 1].base.px);
+	moverY = &(objetos[objetos.size() - 1].base.py);
+	moverZ = &(objetos[objetos.size() - 1].base.pz);
+	rotarX = &(objetos[objetos.size() - 1].base.rx);
+	rotarY = &(objetos[objetos.size() - 1].base.ry);
+	rotarZ = &(objetos[objetos.size() - 1].base.rz);
+	escalarX = &(objetos[objetos.size() - 1].base.sx);
+	escalarY = &(objetos[objetos.size() - 1].base.sy);
+	escalarZ = &(objetos[objetos.size() - 1].base.sz);
 }
 
 // Funcion de dibukop
@@ -101,24 +153,26 @@ void myDisplay(void) {
 	glMatrixMode(GL_MODELVIEW);
 	// Inicializamos la matriz del modelo a la identidad
 	glLoadIdentity();
-	printf("objetos.size() = %d\n", objetos.size());
 	if (objetos.size() > 0) {
-		for (i = 0; i < objetos.size(); i++) {
+		for (i = 0; i < objetos.size() - 1; i++) {
 			glPushMatrix();
 
 			glColor3f(1.0f, 1.0f, 1.0f);
-			if (i == (objetos.size() - 1)) {
-				objetos[i].px = moverX;
-				objetos[i].py = moverY;
-				objetos[i].pz = moverZ;
-				objetos[i].rx = rotarX;
-				objetos[i].ry = rotarY;
-				objetos[i].rz = rotarZ;
-			}
-			debuxarObjeto(objetos[i]);
+			dibujarObjeto(objetos[i]);
 
 			glPopMatrix();
 		}
+
+		glPushMatrix();
+
+		glColor3f(1.0f, 1.0f, 1.0f);
+		asignarParametros();
+		printf("Externas: (%f, %f, %f)", escalarX, escalarY, escalarZ);
+		printf("(%f, %f, %f), (%f, %f, %f)\n", objetos[objetos.size() - 1].base.px, objetos[objetos.size() - 1].base.py,
+			objetos[objetos.size() - 1].base.pz, objetos[objetos.size() - 1].base.sx, objetos[objetos.size() - 1].base.sy,
+			objetos[objetos.size() - 1].base.sz);
+		dibujarObjeto(objetos[objetos.size() - 1]);
+		glPopMatrix();
 	}
 
 	glFlush();
@@ -126,30 +180,51 @@ void myDisplay(void) {
 
 }
 
+void colocarPersonalizado(int indice) {
+	if (usrUsado[indice] == TRUE) {		//Sirve para comprobar si Pers[indice] tiene algo
+		objetos.push_back(Pers[indice]);	//Colocamos objeto personalizado [indice]
+	}
+}
+
 void crearMenu(int item) {
 	switch (item) {
-	case MENU_PRINCIPAL:
+	case USER1:
+		colocarPersonalizado(0);
 		break;
-	case MENU_OBJETOS:
-		break;
-	case MENU_TEXTURAS:
-		break;
-	case MENU_ILUMINACION:
+	case USER2:
+		colocarPersonalizado(1);
 		break;
 	case CUBO:
 		//Estas asignacions son para que apareza no origen, temos que decidir si facer asi ou que apareza superposto
 		//ao ultimo objeto
-		moverX = 0.0f;
-		moverY = 0.0f;
-		moverZ = 0.0f;
-		rotarX = 0.0f;
-		rotarY = 0.0f;
-		rotarZ = 0.0f;
-		objetos.push_back(inicializarObjeto(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 5.0f, 5.0f, 5.0f, cubo));
+		objetos.push_back(inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			1.0f, 1.0f, 1.0f, cubo)));
+		break;
+	case PARAR_MACRO:
+		if (indUser <= -1) {
+			return;
+		}
+		Pers[indUser] = inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, NULL));
+		//Itera por los objetos añadidos al vector objetos para guardarlos en la superestructura (Objeto Pers) y hace pop de ellos
+		for (objetos.size(); objetos.size() > grabacion;) {
+			Pers[indUser].hijos.push_back(objetos[objetos.size()-1]);	//Metemos el objeto mas externo en Pers
+			objetos.pop_back();	//Y lo eliminamos de objetos
+		}
+		usrUsado[indUser] = TRUE; //Indica que Pers[indUser] tiene algo
+		indUser = -1;	//Pone la variable de macro a "Sin grabacion"
+		break;
+	case GMUSR1:
+		indUser = 0;	//Guardo el indice de la macro que se esta grabando
+		grabacion = objetos.size();	//Guardamos el numero de objetos que habia en escena cuando empezamos a grabar
+		break;
+	case GMUSR2:
+		indUser = 1;
+		grabacion = objetos.size();	//Guardamos el numero de objetos que habia en escena cuando empezamos a grabar
 		break;
 	default:
 		break;
 	}
+	printf("Tamano objetos: %d\n", objetos.size());
 	glutPostRedisplay();
 
 	return;
@@ -176,12 +251,24 @@ void menus() {
 	glutAddMenuEntry("Luz 2", LUZ2);
 	glutAddMenuEntry("Luz 3", LUZ3);
 
+	int grabarMacro = glutCreateMenu(crearMenu);
+
+	glutAddMenuEntry("Personalizado 1", GMUSR1);
+	glutAddMenuEntry("Personalizado 2", GMUSR2);
+
+
+	int menuMacro = glutCreateMenu(crearMenu);
+
+	glutAddSubMenu("Grabar", grabarMacro);
+	glutAddMenuEntry("Parar", PARAR_MACRO);
+
 	//Creacion del menu principal
 	int menuPrincipal = glutCreateMenu(crearMenu);
 
-	glutAddSubMenu("Objetos", MENU_OBJETOS);
-	glutAddSubMenu("Texturas", MENU_TEXTURAS);
-	glutAddSubMenu("Iluminación", MENU_ILUMINACION);
+	glutAddSubMenu("Objetos", menuObjetos);
+	glutAddSubMenu("Texturas", menuTexturas);
+	glutAddSubMenu("Iluminación", menuIluminacion);
+	glutAddSubMenu("Macros", menuMacro);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
