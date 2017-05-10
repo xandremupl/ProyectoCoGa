@@ -21,7 +21,78 @@ int myCuadrado() {
 	return(indice);
 }
 
+int myFondo() {
+	int indice;
+	indice = glGenLists(1);
+	glNewList(indice, GL_COMPILE);
 
+	glScalef(250.0f, 250.0f, 250.0f);
+
+	// Cara 1 (frontal) 
+	glBegin(GL_QUADS);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(.5f, .5f, .5f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(.5f, -.5f, .5f);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-.5f, -.5f, .5f);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-.5f, .5f, .5f);
+	glEnd();
+
+	//Cara 2 (izquierda)
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-.5f, .5f, .5f);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-.5f, -.5f, .5f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(-.5f, -.5f, -.5f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-.5f, .5f, -.5f);
+	glEnd();
+
+	//Cara 3 (trasera)
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-.5f, -.5f, -.5f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(.5f, -.5f, -.5f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(.5f, .5f, -.5f);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-.5f, .5f, -.5f);
+	glEnd();
+
+	//Cara 4 (derecha)
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(.5f, .5f, -.5f);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(.5f, -.5f, -.5f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(.5f, -.5f, .5f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(.5f, .5f, .5f);
+	glEnd();
+
+	//Cara 5 (inferior)
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-.5f, -.5f, .5f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(.5f, -.5f, .5f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(.5f, -.5f, -.5f);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-.5f, -.5f, -.5f);
+	glEnd();
+
+
+	glEndList();
+
+	return indice;
+}
 
 int myCubo()
 {

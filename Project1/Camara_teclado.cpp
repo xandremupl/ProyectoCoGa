@@ -35,7 +35,7 @@ void myCamara() {
 			((float)DISTANCIA * 9 * cos(alpha)*cos(beta)), 0, 0, 0, 0, 1, 0);
 	}
 	else {
-		glOrtho(-200.0, 200.0f, -200.0, 200.0f, -200.0, 200.0f);
+		glOrtho(-200.0, 200.0f, -200.0, 200.0f, -200.0, 400.0f);
 		gluLookAt(((float)DISTANCIA * (float)sin(alpha)*cos(beta)), ((float)DISTANCIA * (float)sin(beta)),
 			((float)DISTANCIA * cos(alpha)*cos(beta)), 0, 0, 0, 0, 1, 0);
 	}

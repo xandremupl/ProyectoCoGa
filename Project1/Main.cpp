@@ -62,6 +62,10 @@ enum TIPO_MENU {
 	BRICK,
 	CRISTAL,
 	HIERBA,
+	GLOWSTONE,
+	CAJA,
+	TEJAS,
+	METAL,
 	LUZ1,
 	LUZ2,
 	LUZ3,
@@ -411,6 +415,18 @@ void crearMenu(int item) {
 	case HIERBA:
 		Carga_Texturas(&(objetos[objetos.size() - 1].base.textura), "./Texturas/hierba.png");
 		break;
+	case GLOWSTONE:
+		Carga_Texturas(&(objetos[objetos.size() - 1].base.textura), "./Texturas/Glowstone.png");
+		break;
+	case CAJA:
+		Carga_Texturas(&(objetos[objetos.size() - 1].base.textura), "./Texturas/Caja.png");
+		break;
+	case TEJAS:
+		Carga_Texturas(&(objetos[objetos.size() - 1].base.textura), "./Texturas/tejas.png");
+		break;
+	case METAL:
+		Carga_Texturas(&(objetos[objetos.size() - 1].base.textura), "./Texturas/metal.png");
+		break;
 	case SPACE:
 		Carga_Texturas(&(objetos[objetos.size() - 1].base.textura), "./Texturas/space.png");
 		break;
@@ -474,6 +490,10 @@ void menus() {
 	glutAddMenuEntry("Cobblestone", COBBLESTONE);
 	glutAddMenuEntry("Bricks", BRICK);
 	glutAddMenuEntry("Hierba", HIERBA);
+	glutAddMenuEntry("Glowstone", GLOWSTONE);
+	glutAddMenuEntry("Caja", CAJA);
+	glutAddMenuEntry("Tejas", TEJAS);
+	glutAddMenuEntry("Metal", METAL);
 	glutAddMenuEntry("Sky", SKY);
 	glutAddMenuEntry("Space", SPACE);
 
@@ -527,78 +547,7 @@ void init() {
 	
 }
 
-int myFondo() {
-	int indice;
-	indice = glGenLists(1);
-	glNewList(indice, GL_COMPILE);
 
-	glScalef(250.0f, 250.0f, 250.0f);
-
-	// Cara 1 (frontal) 
-	glBegin(GL_QUADS);
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex3f(.5f, .5f, .5f);
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex3f(.5f, -.5f, .5f);
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex3f(-.5f, -.5f, .5f);
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex3f(-.5f, .5f, .5f);
-	glEnd();
-
-	//Cara 2 (izquierda)
-	glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex3f(-.5f, .5f, .5f);
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex3f(-.5f, -.5f, .5f);
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex3f(-.5f, -.5f, -.5f);
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex3f(-.5f, .5f, -.5f);
-	glEnd();
-
-	//Cara 3 (trasera)
-	glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex3f(-.5f, -.5f, -.5f);
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex3f(.5f, -.5f, -.5f);
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex3f(.5f, .5f, -.5f);
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex3f(-.5f, .5f, -.5f);
-	glEnd();
-
-	//Cara 4 (derecha)
-	glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex3f(.5f, .5f, -.5f);
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex3f(.5f, -.5f, -.5f);
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex3f(.5f, -.5f, .5f);
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex3f(.5f, .5f, .5f);
-	glEnd();
-
-	//Cara 6 (inferior)
-	glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex3f(-.5f, -.5f, .5f);
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex3f(.5f, -.5f, .5f);
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex3f(.5f, -.5f, -.5f);
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex3f(-.5f, -.5f, -.5f);
-	glEnd();
-
-
-	glEndList();
-
-	return indice;
-}
 
 int main(int argc, char **argv) {
 
