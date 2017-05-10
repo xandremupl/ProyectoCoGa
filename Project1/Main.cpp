@@ -197,15 +197,11 @@ void myDisplay(void) {
 
 	glPushMatrix();
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glColor3f(color[0], color[1], color[2]);
 	glTranslatef(0.0f, 0.0f, objFondo.base.pz);
 	glCallList(fondo);
 
 	glPopMatrix();
-
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	if (objetos.size() > 0) {
 		for (i = 0; i < objetos.size() - 1; i++) {
