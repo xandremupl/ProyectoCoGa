@@ -18,6 +18,8 @@ int cubo;
 int esfera;
 int fondo;
 
+GLuint fondoTex[5];
+
 
 #define GL_PI 3.14f
 
@@ -67,6 +69,7 @@ enum TIPO_MENU {
 	AMARILLO,
 	MAGENTA,
 	CIAN,
+	BLANCO,
 };
 
 typedef struct {
@@ -298,6 +301,9 @@ void crearMenu(int item) {
 	case CIAN:
 		cambiarColorObjeto(&(objetos[objetos.size() - 1]), 0.0f, 1.0f, 1.0f);
 		break;
+	case BLANCO:
+		cambiarColorObjeto(&(objetos[objetos.size() - 1]), 1.0f, 1.0f, 1.0f);
+		break;
 	case NONE_TEXTURE:
 		objetos[objetos.size() - 1].base.textura = 0;
 		break;
@@ -319,15 +325,16 @@ void crearMenu(int item) {
 void Iluminacion() {
 	//Variables de luz
 
-	GLfloat Ambiente[4] = { .3f, .3f, .3f, .5f };	//Luz Gris
-	GLfloat LuzPos[4] = { 1.0f,1.0f, 1.0f, 0.0f };	//Luz desde arriba
-	GLfloat Difusa[4] = { .5f,.5f,.5f,.5f };
+
+	GLfloat Ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	GLfloat Position[] = { -1.5f, 1.0f, -4.0f, 1.0f };
+	GLfloat Diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 
 	//Definimos las luces
-	glLightfv(GL_LIGHT0, GL_AMBIENT, Ambiente);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, Difusa);
-	glLightfv(GL_LIGHT0, GL_POSITION, LuzPos);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, Ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, Diffuse);
+	glLightfv(GL_LIGHT0, GL_POSITION, Position);
 
 
 	//Foco();
@@ -381,7 +388,7 @@ void menus() {
 	glutAddMenuEntry("Amarillo", AMARILLO);
 	glutAddMenuEntry("Magenta", MAGENTA);
 	glutAddMenuEntry("Cian", CIAN);
-
+	glutAddMenuEntry("Blanco", BLANCO);
 
 	//Creacion del menu principal
 	int menuPrincipal = glutCreateMenu(crearMenu);
@@ -392,6 +399,14 @@ void menus() {
 	glutAddSubMenu("Macros", menuMacro);
 	glutAddSubMenu("Color", menuColor);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
+}
+
+void init() {
+	Carga_Texturas(&fondoTex[0], "./Texturas/sky.png");
+	fondoTex[1] = fondoTex[0];
+	fondoTex[2] = fondoTex[0];
+	fondoTex[3] = fondoTex[0];
+	fondoTex[4] = fondoTex[0];
 }
 
 int main(int argc, char **argv) {
@@ -436,6 +451,7 @@ int main(int argc, char **argv) {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	//Creacion del submenu de objetos
 	menus();
+	init();
 
 	// Empieza en bucle principal
 	glutMainLoop();
