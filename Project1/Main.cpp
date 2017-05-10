@@ -208,14 +208,6 @@ void myDisplay(void) {
 	// Inicializamos la matriz del modelo a la identidad
 	glLoadIdentity();
 
-	glPushMatrix();
-
-	//glColor3f(color[0], color[1], color[2]);
-	glTranslatef(0.0f, 0.0f, objFondo.base.pz);
-	glCallList(fondo);
-
-	glPopMatrix();
-
 	if (objetos.size() > 0) {
 		for (i = 0; i < objetos.size() - 1; i++) {
 			glPushMatrix();
@@ -254,8 +246,6 @@ void crearMenu(int item) {
 		colocarPersonalizado(1);
 		break;
 	case CUBO:
-		//Estas asignacions son para que apareza no origen, temos que decidir si facer asi ou que apareza superposto
-		//ao ultimo objeto
 		objetos.push_back(inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 			1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, cubo)));
 		break;
