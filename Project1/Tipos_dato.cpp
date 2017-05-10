@@ -69,16 +69,6 @@ int myFondo() {
 	glVertex3f(-.5, .5, -.5f);
 	glVertex3f(-.5, .5, .5f);
 
-
-	//Cara up
-	glVertex3f(-.5, .5, .5f);
-	glVertex3f(.5, .5, -.5f);
-	glVertex3f(.5, .5, .5f);
-
-	glVertex3f(-.5, .5, .5f);
-	glVertex3f(-.5, .5, -.5f);
-	glVertex3f(.5, .5, -.5f);
-
 	//Cara down
 
 	glVertex3f(-.5, -.5, .5f);
