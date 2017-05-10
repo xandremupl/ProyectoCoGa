@@ -110,9 +110,6 @@ int myCubo()
 	glVertex3f(.5f, .5f, .5f);
 	glEnd();
 
-	// Cargamos el resto de la textura
-	glBindTexture(GL_TEXTURE_2D, texturas[1]);
-
 	//Cara 2 (izquierda)
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
