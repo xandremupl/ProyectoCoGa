@@ -4,6 +4,7 @@
 #include <GL/gl.h>		//Inclusion de GL		 	
 #include <GL/glu.h>	
 #include <stdio.h>
+
 #include <math.h>	//Inclusion de librerias auxiliares
 #include "Camara_teclado.h"
 

@@ -5,10 +5,13 @@
 #include <GL/glu.h>	
 #include <vector>
 #include <stdio.h>
+#include <SOIL.h>
+#include <GLAUX.H>
+
 #include <math.h>	//Inclusion de librerias auxiliares	
 #include "Camara_teclado.h"
-const int W_WIDTH = 500;	 //Ancho de la ventana
-const int W_HEIGHT = 500;		//Alto de la ventana
+int W_WIDTH = 500;	 //Ancho de la ventana
+int W_HEIGHT = 500;		//Alto de la ventana
 
 int cuadrado;
 int cubo;
@@ -34,6 +37,8 @@ float *escalarY;
 float *escalarZ;
 
 //Funciones externas
+//extern AUX_RGBImageRec *Carga_BMP(char *Nome_ficheiro);
+//extern void Libera_BMP(AUX_RGBImageRec *TextureImage);
 extern int myCuadrado();
 extern int myCubo();
 extern int myEsfera();
@@ -42,7 +47,9 @@ enum TIPO_MENU {
 	CUBO,
 	USER1,
 	USER2,
-	CEMENTO,
+	NONE_TEXTURE,
+	COBBLESTONE,
+	BRICK,
 	CRISTAL,
 	HIERBA,
 	LUZ1,
@@ -58,6 +65,7 @@ typedef struct {
 	float rx, ry, rz; // angulos de giro
 	float sx, sy, sz; // escalado en los tres ejes.
 	int listaRender; // lista de render
+	GLuint textura;	//Textura
 } ObjBase;
 
 struct Objeto {
@@ -73,6 +81,16 @@ Objeto Pers[2];
 GLboolean usrUsado[2];
 int grabacion;	//Variable para hacer posibles las grabaciones
 int indUser = -1;	//Indice de la macro grabada (-1 significa sin grabar)
+
+void Carga_Texturas(GLuint *tex, char* ruta) {
+
+	*tex = SOIL_load_OGL_texture(ruta, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glBindTexture(GL_TEXTURE_2D, *tex);
+}
 
 ObjBase inicializarObjBase(float px, float py, float pz, float rx, float ry, float rz, float sx,
 	float sy, float sz, int listaRender) {
@@ -96,6 +114,14 @@ Objeto inicializarObjeto(ObjBase objBase) {
 	return(obj);
 }
 
+void changeSize(GLint newWidth, GLint newHeight) {
+	W_WIDTH = newWidth;
+	W_HEIGHT = newHeight;
+
+	glViewport(0, 0, W_WIDTH, W_HEIGHT);
+	glutPostRedisplay();
+}
+
 void dibujarObjeto(Objeto objeto) {
 	int i;
 	ObjBase* base = &(objeto.base);
@@ -104,6 +130,7 @@ void dibujarObjeto(Objeto objeto) {
 	if (objeto.hijos.size() == 0) {	//Obj no tiene hijos
 		//Aplicamos transformaciones
 		glPushMatrix();
+			glBindTexture(GL_TEXTURE_2D, objeto.base.textura);
 			glTranslatef(base->px, base->py, base->pz);
 			glRotatef(base->rx, 1.0f, 0.0f, 0.0f);
 			glRotatef(base->ry, 0.0f, 1.0f, 0.0f);
@@ -167,7 +194,7 @@ void myDisplay(void) {
 
 		glColor3f(1.0f, 1.0f, 1.0f);
 		asignarParametros();
-		printf("Externas: (%f, %f, %f)", escalarX, escalarY, escalarZ);
+		printf("Externas: (%f, %f, %f)", *escalarX, *escalarY, *escalarZ);
 		printf("(%f, %f, %f), (%f, %f, %f)\n", objetos[objetos.size() - 1].base.px, objetos[objetos.size() - 1].base.py,
 			objetos[objetos.size() - 1].base.pz, objetos[objetos.size() - 1].base.sx, objetos[objetos.size() - 1].base.sy,
 			objetos[objetos.size() - 1].base.sz);
@@ -221,6 +248,16 @@ void crearMenu(int item) {
 		indUser = 1;
 		grabacion = objetos.size();	//Guardamos el numero de objetos que habia en escena cuando empezamos a grabar
 		break;
+	case NONE_TEXTURE:
+		objetos[objetos.size() - 1].base.textura = 0;
+		break;
+	case COBBLESTONE:
+		Carga_Texturas(&(objetos[objetos.size() - 1].base.textura), "./Texturas/cobblestone.png");
+		break;
+	case BRICK:
+		Carga_Texturas(&(objetos[objetos.size() - 1].base.textura), "./Texturas/brick.png");
+		break;
+
 	default:
 		break;
 	}
@@ -240,8 +277,9 @@ void menus() {
 	//Creacion del submenu de texturas
 	int menuTexturas = glutCreateMenu(crearMenu);
 
-	glutAddMenuEntry("Cemento", CEMENTO);
-	glutAddMenuEntry("Cristal", CRISTAL);
+	glutAddMenuEntry("Ninguna", NONE_TEXTURE);
+	glutAddMenuEntry("Cobblestone", COBBLESTONE);
+	glutAddMenuEntry("Bricks", BRICK);
 	glutAddMenuEntry("Hierba", HIERBA);
 
 	//Creacion del submenu de iluminacion
@@ -282,7 +320,7 @@ int main(int argc, char **argv) {
 	//Inicaliza el modeo de display, RGBA y Doble buffer
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
 	// Nombre de la ventana
-	glutCreateWindow("Ventana con el Visual C++ y glut");
+	glutCreateWindow("3D Composite-Builder");
 	//Incializacion listas
 	cuadrado = myCuadrado();
 	cubo = myCubo();
@@ -292,12 +330,14 @@ int main(int argc, char **argv) {
 	glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_TEXTURE_2D);
 	// Normaliza las normales
 	glEnable(GL_NORMALIZE);
 
 	//Eventos
 
 	glutKeyboardFunc(myTeclado);
+	glutReshapeFunc(changeSize);
 	glutSpecialFunc(myTeclasespeciales);
 	glutDisplayFunc(myDisplay);
 
