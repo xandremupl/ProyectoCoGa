@@ -306,21 +306,24 @@ void crearMenu(int item) {
 void Iluminacion() {
 	//Variables de luz
 
-	GLfloat Ambiente[4] = { .3f, .3f, .3f, .5f };	//Luz Gris
-	GLfloat LuzPos[4] = { 1.0f,1.0f, 1.0f, 0.0f };	//Luz desde arriba
-	GLfloat Difusa[4] = { .5f,.5f,.5f,.5f };
+
+	GLfloat Ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	GLfloat Position[] = { -1.5f, 1.0f, -4.0f, 1.0f };
+	GLfloat Diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 
 	//Definimos las luces
-	glLightfv(GL_LIGHT0, GL_AMBIENT, Ambiente);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, Difusa);
-	glLightfv(GL_LIGHT0, GL_POSITION, LuzPos);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, Ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, Diffuse);
+	glLightfv(GL_LIGHT0, GL_POSITION, Position);
 
 
 	//Foco();
 
 	//Activacion de Luces
-	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT0);	//Luz
+	//glEnable(GL_LIGHT1);	//Luz Ambiente
+	glShadeModel(GL_SMOOTH); 
 	glEnable(GL_LIGHTING);
 
 }
