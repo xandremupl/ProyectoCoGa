@@ -16,6 +16,7 @@ int W_HEIGHT = 500;		//Alto de la ventana
 int cuadrado;
 int cubo;
 int esfera;
+int fondo;
 
 
 #define GL_PI 3.14f
@@ -25,7 +26,6 @@ int esfera;
 //static GLfloat xRot = 0.0f;
 //static GLfloat yRot = 0.0f;
 
-//Variables externas
 float *rotarX;
 float *rotarY;
 float *rotarZ;
@@ -42,6 +42,7 @@ float *escalarZ;
 extern int myCuadrado();
 extern int myCubo();
 extern int myEsfera();
+extern int myFondo();
 
 enum TIPO_MENU {
 	CUBO,
@@ -58,6 +59,12 @@ enum TIPO_MENU {
 	PARAR_MACRO,
 	GMUSR1,
 	GMUSR2,
+	ROJO,
+	VERDE,
+	AZUL,
+	AMARILLO,
+	MAGENTA,
+	CIAN,
 };
 
 typedef struct {
@@ -76,11 +83,12 @@ struct Objeto {
 typedef struct Objeto Objeto;
 
 std::vector<Objeto> objetos;
-ObjBase aux;
+Objeto objFondo;
 Objeto Pers[2];
 GLboolean usrUsado[2];
 int grabacion;	//Variable para hacer posibles las grabaciones
 int indUser = -1;	//Indice de la macro grabada (-1 significa sin grabar)
+float color[3];
 
 void Carga_Texturas(GLuint *tex, char* ruta) {
 
@@ -167,6 +175,12 @@ void asignarParametros() {
 	escalarZ = &(objetos[objetos.size() - 1].base.sz);
 }
 
+void cambiarColorFondo(float red, float green, float blue) {
+	color[0] = red;
+	color[1] = green;
+	color[2] = blue;
+}
+
 // Funcion de dibukop
 void myDisplay(void) {
 	int i;
@@ -180,6 +194,19 @@ void myDisplay(void) {
 	glMatrixMode(GL_MODELVIEW);
 	// Inicializamos la matriz del modelo a la identidad
 	glLoadIdentity();
+
+	glPushMatrix();
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glColor3f(color[0], color[1], color[2]);
+	glTranslatef(0.0f, 0.0f, objFondo.base.pz);
+	glCallList(fondo);
+
+	glPopMatrix();
+
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 	if (objetos.size() > 0) {
 		for (i = 0; i < objetos.size() - 1; i++) {
 			glPushMatrix();
@@ -194,10 +221,6 @@ void myDisplay(void) {
 
 		glColor3f(1.0f, 1.0f, 1.0f);
 		asignarParametros();
-		printf("Externas: (%f, %f, %f)", *escalarX, *escalarY, *escalarZ);
-		printf("(%f, %f, %f), (%f, %f, %f)\n", objetos[objetos.size() - 1].base.px, objetos[objetos.size() - 1].base.py,
-			objetos[objetos.size() - 1].base.pz, objetos[objetos.size() - 1].base.sx, objetos[objetos.size() - 1].base.sy,
-			objetos[objetos.size() - 1].base.sz);
 		dibujarObjeto(objetos[objetos.size() - 1]);
 		glPopMatrix();
 	}
@@ -248,6 +271,24 @@ void crearMenu(int item) {
 		indUser = 1;
 		grabacion = objetos.size();	//Guardamos el numero de objetos que habia en escena cuando empezamos a grabar
 		break;
+	case ROJO:
+		cambiarColorFondo(1.0f, 0.0f, 0.0f);
+		break;
+	case VERDE:
+		cambiarColorFondo(0.0f, 1.0f, 0.0f);
+		break;
+	case AZUL:
+		cambiarColorFondo(0.0f, 0.0f, 1.0f);
+		break;
+	case AMARILLO:
+		cambiarColorFondo(1.0f, 1.0f, 0.0f);
+		break;
+	case MAGENTA:
+		cambiarColorFondo(1.0f, 0.0f, 1.0f);
+		break;
+	case CIAN:
+		cambiarColorFondo(0.0f, 1.0f, 1.0f);
+		break;
 	case NONE_TEXTURE:
 		objetos[objetos.size() - 1].base.textura = 0;
 		break;
@@ -261,7 +302,6 @@ void crearMenu(int item) {
 	default:
 		break;
 	}
-	printf("Tamano objetos: %d\n", objetos.size());
 	glutPostRedisplay();
 
 	return;
@@ -289,16 +329,28 @@ void menus() {
 	glutAddMenuEntry("Luz 2", LUZ2);
 	glutAddMenuEntry("Luz 3", LUZ3);
 
+	//Creacion del menu de grabacion
 	int grabarMacro = glutCreateMenu(crearMenu);
 
 	glutAddMenuEntry("Personalizado 1", GMUSR1);
 	glutAddMenuEntry("Personalizado 2", GMUSR2);
 
-
+	//Creacion del menu de macros
 	int menuMacro = glutCreateMenu(crearMenu);
 
 	glutAddSubMenu("Grabar", grabarMacro);
 	glutAddMenuEntry("Parar", PARAR_MACRO);
+
+	//Creacion del menu del fondo
+	int menuFondo = glutCreateMenu(crearMenu);
+
+	glutAddMenuEntry("Rojo", ROJO);
+	glutAddMenuEntry("Verde", VERDE);
+	glutAddMenuEntry("Azul", AZUL);
+	glutAddMenuEntry("Amarillo", AMARILLO);
+	glutAddMenuEntry("Magenta", MAGENTA);
+	glutAddMenuEntry("Cian", CIAN);
+
 
 	//Creacion del menu principal
 	int menuPrincipal = glutCreateMenu(crearMenu);
@@ -307,6 +359,7 @@ void menus() {
 	glutAddSubMenu("Texturas", menuTexturas);
 	glutAddSubMenu("Iluminación", menuIluminacion);
 	glutAddSubMenu("Macros", menuMacro);
+	glutAddSubMenu("Fondo", menuFondo);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
@@ -325,6 +378,11 @@ int main(int argc, char **argv) {
 	cuadrado = myCuadrado();
 	cubo = myCubo();
 	esfera = myEsfera();
+	fondo = myFondo();
+
+	//Inicializacion fondo
+	objFondo = inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, fondo));
+	cambiarColorFondo(1.0f, 0.0f, 0.0f);
 
 	// Detectar profundidad de obxetos y no dibujar caras ocultas
 	glClearDepth(1.0f);

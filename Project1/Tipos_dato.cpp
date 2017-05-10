@@ -23,72 +23,147 @@ int myCuadrado() {
 	return(indice);
 }
 
+int myFondo() {
+	int indice;
+	indice = glGenLists(1);
+	glNewList(indice, GL_COMPILE);
+
+	glScalef(250.0f, 250.0f, 250.0f);
+	//Cara Fron
+	glBegin(GL_TRIANGLES);
+	glVertex3f(-.5f, -0.5f, .5f);
+	glVertex3f(.5f, .5f, .5f);
+	glVertex3f(.5f, -.5f, .5f);
+
+	glVertex3f(-.5f, -.5f, .5f);
+	glVertex3f(-.5f, .5f, .5f);
+	glVertex3f(.5f, .5f, .5f);
+
+	//Cara back
+	glVertex3f(-.5f, -.5f, -.5f);
+	glVertex3f(.5f, -.5f, -.5f);
+	glVertex3f(.5, .5f, -.5f);
+
+
+	glVertex3f(-.5, -.5f, -.5f);
+	glVertex3f(.5f, .5f, -.5f);
+	glVertex3f(-.5f, .5f, -.5f);
+
+	//Cara derecha
+
+	glVertex3f(.5f, -.5f, .5f);
+	glVertex3f(.5f, .5f, -.5f);
+	glVertex3f(.5f, -.5f, -.5f);
+
+	glVertex3f(.5f, -.5, .5f);
+	glVertex3f(.5, .5, .5f);
+	glVertex3f(.5f, .5, -.5f);
+
+	//Cara izq
+	glVertex3f(-.5, -.5, .5f);
+	glVertex3f(-.5, -.5, -.5f);
+	glVertex3f(-.5, .5, .5f);
+
+
+	glVertex3f(-.5, -.5, -.5f);
+	glVertex3f(-.5, .5, -.5f);
+	glVertex3f(-.5, .5, .5f);
+
+
+	//Cara up
+	glVertex3f(-.5, .5, .5f);
+	glVertex3f(.5, .5, -.5f);
+	glVertex3f(.5, .5, .5f);
+
+	glVertex3f(-.5, .5, .5f);
+	glVertex3f(-.5, .5, -.5f);
+	glVertex3f(.5, .5, -.5f);
+
+	//Cara down
+
+	glVertex3f(-.5, -.5, .5f);
+	glVertex3f(.5, -.5, -.5f);
+	glVertex3f(-.5, -.5, -.5f);
+
+	glVertex3f(-.5, -.5, .5f);
+	glVertex3f(.5, -.5, .5f);
+	glVertex3f(.5, -.5, -.5f);
+
+
+
+	glEnd();
+
+	glEndList();
+
+	return indice;
+}
+
 int myCubo()
 {
 	int indice;
 	indice = glGenLists(1);
 	glNewList(indice, GL_COMPILE);
 
-	//glScalef(5.0f, 5.0f, 5.0f);
+	glScalef(5.0f, 5.0f, 5.0f);
 	//Cara Fron
 	glBegin(GL_TRIANGLES);
-	glVertex3f(-.5f, -0.5f, 1.0f);
-	glVertex3f(.5f, -.5f, 1.0f);
-	glVertex3f(.5f, .5f, 1.0f);
+	glVertex3f(-.5f, -0.5f, .5f);
+	glVertex3f(.5f, -.5f, .5f);
+	glVertex3f(.5f, .5f, .5f);
 
-	glVertex3f(-.5f, -.5f, 1.0f);
-	glVertex3f(.5f, .5f, 1.0f);
-	glVertex3f(-.5f, .5f, 1.0f);
+	glVertex3f(-.5f, -.5f, .5f);
+	glVertex3f(.5f, .5f, .5f);
+	glVertex3f(-.5f, .5f, .5f);
 
 	//Cara back
-	glVertex3f(-.5f, -.5f, 0.0f);
-	glVertex3f(.5, .5f, 0.0f);
-	glVertex3f(.5f, -.5f, 0.0f);
+	glVertex3f(-.5f, -.5f, -.5f);
+	glVertex3f(.5, .5f, -.5f);
+	glVertex3f(.5f, -.5f, -.5f);
 
 
-	glVertex3f(-.5, -.5f, 0.0f);
-	glVertex3f(-.5f, .5f, 0.0f);
-	glVertex3f(.5f, .5f, 0.0f);
+	glVertex3f(-.5, -.5f, -.5f);
+	glVertex3f(-.5f, .5f, -.5f);
+	glVertex3f(.5f, .5f, -.5f);
 
 	//Cara derecha
 
-	glVertex3f(.5f, -.5f, 1.0f);
-	glVertex3f(.5f, -.5f, 0.0f);
-	glVertex3f(.5f, .5f, 0.0f);
+	glVertex3f(.5f, -.5f, .5f);
+	glVertex3f(.5f, -.5f, -.5f);
+	glVertex3f(.5f, .5f, -.5f);
 
-	glVertex3f(.5f, -.5, 1.0f);
-	glVertex3f(.5f, .5, 0.0f);
-	glVertex3f(.5, .5, 1.0f);
+	glVertex3f(.5f, -.5, .5f);
+	glVertex3f(.5f, .5, -.5f);
+	glVertex3f(.5, .5, .5f);
 
 	//Cara izq
-	glVertex3f(-.5, -.5, 1.0f);
-	glVertex3f(-.5, .5, 1.0f);
-	glVertex3f(-.5, -.5, 0.0f);
+	glVertex3f(-.5, -.5, .5f);
+	glVertex3f(-.5, .5, .5f);
+	glVertex3f(-.5, -.5, -.5f);
 
 
-	glVertex3f(-.5, -.5, 0.0f);
-	glVertex3f(-.5, .5, 1.0f);
-	glVertex3f(-.5, .5, 0.0f);
+	glVertex3f(-.5, -.5, -.5f);
+	glVertex3f(-.5, .5, .5f);
+	glVertex3f(-.5, .5, -.5f);
 
 
 	//Cara up
-	glVertex3f(-.5, .5, 1.0f);
-	glVertex3f(.5, .5, 1.0f);
-	glVertex3f(.5, .5, 0.0f);
+	glVertex3f(-.5, .5, .5f);
+	glVertex3f(.5, .5, .5f);
+	glVertex3f(.5, .5, -.5f);
 
-	glVertex3f(-.5, .5, 1.0f);
-	glVertex3f(.5, .5, 0.0f);
-	glVertex3f(-.5, .5, 0.0f);
+	glVertex3f(-.5, .5, .5f);
+	glVertex3f(.5, .5, -.5f);
+	glVertex3f(-.5, .5, -.5f);
 
 	//Cara down
 
-	glVertex3f(-.5, -.5, 1.0f);
-	glVertex3f(-.5, -.5, 0.0f);
-	glVertex3f(.5, -.5, 0.0f);
+	glVertex3f(-.5, -.5, .5f);
+	glVertex3f(-.5, -.5, -.5f);
+	glVertex3f(.5, -.5, -.5f);
 
-	glVertex3f(-.5, -.5, 1.0f);
-	glVertex3f(.5, -.5, 0.0f);
-	glVertex3f(.5, -.5, 1.0f);
+	glVertex3f(-.5, -.5, .5f);
+	glVertex3f(.5, -.5, -.5f);
+	glVertex3f(.5, -.5, .5f);
 
 
 
