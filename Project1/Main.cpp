@@ -38,6 +38,8 @@ float *escalarX;
 float *escalarY;
 float *escalarZ;
 
+extern GLboolean luz;
+
 //Funciones externas
 //extern AUX_RGBImageRec *Carga_BMP(char *Nome_ficheiro);
 //extern void Libera_BMP(AUX_RGBImageRec *TextureImage);
@@ -206,19 +208,16 @@ void myDisplay(void) {
 
 	myCamara();
 
+	if (luz) {
+		glEnable(GL_LIGHTING);
+	}
+	else {
+		glDisable(GL_LIGHTING);
+	}
 	// Incluye una matriz de rotacion en todos los puntos que se dibujen
 	glMatrixMode(GL_MODELVIEW);
 	// Inicializamos la matriz del modelo a la identidad
 	glLoadIdentity();
-
-	glPushMatrix();
-
-	//glColor3f(color[0], color[1], color[2]);
-	glBindTexture(GL_TEXTURE_2D, fondoTex[0]);
-	glTranslatef(0.0f, 0.0f, objFondo.base.pz);
-	glCallList(fondo);
-
-	glPopMatrix();
 
 	if (objetos.size() > 0) {
 		for (i = 0; i < objetos.size() - 1; i++) {
@@ -258,8 +257,6 @@ void crearMenu(int item) {
 		colocarPersonalizado(1);
 		break;
 	case CUBO:
-		//Estas asignacions son para que apareza no origen, temos que decidir si facer asi ou que apareza superposto
-		//ao ultimo objeto
 		objetos.push_back(inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 			1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, cubo)));
 		break;
@@ -341,9 +338,7 @@ void Iluminacion() {
 	//Foco();
 
 	//Activacion de Luces
-	//glEnable(GL_LIGHT0);	//Luz
-	//glEnable(GL_LIGHT1);	//Luz Ambiente
-	glShadeModel(GL_SMOOTH); 
+	glEnable(GL_LIGHT0);
 	//glEnable(GL_LIGHTING);
 
 }

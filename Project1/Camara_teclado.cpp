@@ -21,6 +21,7 @@ extern float *escalarZ;
 float alpha = 0;
 float beta = 0;
 GLboolean perspectiva[5] = { FALSE, FALSE, FALSE, TRUE, FALSE };
+GLboolean luz = FALSE;
 
 void myCamara() {
 
@@ -127,6 +128,14 @@ void myTeclado(unsigned char tras, int x, int y)
 		break;
 	case 'y':
 		*escalarZ += INCESC;
+		break;
+	case 'm':
+		if (!luz) {
+			luz = TRUE;
+		}
+		else {
+			luz = FALSE;
+		}
 		break;
 	case 27:
 		exit(0);
