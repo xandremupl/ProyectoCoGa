@@ -29,13 +29,16 @@ void myCamara() {
 	//La ponemos a uno
 	glLoadIdentity();
 	if (perspectiva[4]) {
-		gluPerspective(65, 1, 12, 300);
+		gluPerspective(65, 1, 12, 1000);
+		gluLookAt(((float)DISTANCIA * 9 * (float)sin(alpha)*cos(beta)), ((float)DISTANCIA * 9 * (float)sin(beta)),
+			((float)DISTANCIA * 9 * cos(alpha)*cos(beta)), 0, 0, 0, 0, 1, 0);
 	}
 	else {
 		glOrtho(-200.0, 200.0f, -200.0, 200.0f, -200.0, 200.0f);
+		gluLookAt(((float)DISTANCIA * (float)sin(alpha)*cos(beta)), ((float)DISTANCIA * (float)sin(beta)),
+			((float)DISTANCIA * cos(alpha)*cos(beta)), 0, 0, 0, 0, 1, 0);
 	}
-	gluLookAt(((float)DISTANCIA*(float)sin(alpha)*cos(beta)), ((float)DISTANCIA*(float)sin(beta)),
-		((float)DISTANCIA*cos(alpha)*cos(beta)), 0, 0, 0, 0, 1, 0);
+	
 
 }
 
