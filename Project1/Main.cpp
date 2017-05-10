@@ -70,6 +70,8 @@ enum TIPO_MENU {
 	MAGENTA,
 	CIAN,
 	BLANCO,
+	SKY,
+	SPACE,
 };
 
 typedef struct {
@@ -313,7 +315,15 @@ void crearMenu(int item) {
 	case BRICK:
 		Carga_Texturas(&(objetos[objetos.size() - 1].base.textura), "./Texturas/brick.png");
 		break;
-
+	case SKY:
+		Carga_Texturas(&(objetos[objetos.size() - 1].base.textura), "./Texturas/sky.png");
+		break;
+	case HIERBA:
+		Carga_Texturas(&(objetos[objetos.size() - 1].base.textura), "./Texturas/hierba.png");
+		break;
+	case SPACE:
+		Carga_Texturas(&(objetos[objetos.size() - 1].base.textura), "./Texturas/space.png");
+		break;
 	default:
 		break;
 	}
@@ -324,7 +334,6 @@ void crearMenu(int item) {
 
 void Iluminacion() {
 	//Variables de luz
-
 
 	GLfloat Ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
 	GLfloat Position[] = { -1.5f, 1.0f, -4.0f, 1.0f };
@@ -359,6 +368,8 @@ void menus() {
 	glutAddMenuEntry("Cobblestone", COBBLESTONE);
 	glutAddMenuEntry("Bricks", BRICK);
 	glutAddMenuEntry("Hierba", HIERBA);
+	glutAddMenuEntry("Sky", SKY);
+	glutAddMenuEntry("Space", SPACE);
 
 	//Creacion del submenu de iluminacion
 	int menuIluminacion = glutCreateMenu(crearMenu);
@@ -379,7 +390,7 @@ void menus() {
 	glutAddSubMenu("Grabar", grabarMacro);
 	glutAddMenuEntry("Parar", PARAR_MACRO);
 
-	//Creacion del menu del fondo
+	//Creacion del menu del color
 	int menuColor = glutCreateMenu(crearMenu);
 
 	glutAddMenuEntry("Rojo", ROJO);
@@ -389,6 +400,8 @@ void menus() {
 	glutAddMenuEntry("Magenta", MAGENTA);
 	glutAddMenuEntry("Cian", CIAN);
 	glutAddMenuEntry("Blanco", BLANCO);
+
+	
 
 	//Creacion del menu principal
 	int menuPrincipal = glutCreateMenu(crearMenu);
@@ -402,11 +415,80 @@ void menus() {
 }
 
 void init() {
-	Carga_Texturas(&fondoTex[0], "./Texturas/sky.png");
-	fondoTex[1] = fondoTex[0];
-	fondoTex[2] = fondoTex[0];
-	fondoTex[3] = fondoTex[0];
-	fondoTex[4] = fondoTex[0];
+	
+}
+
+int myFondo() {
+	int indice;
+	indice = glGenLists(1);
+	glNewList(indice, GL_COMPILE);
+
+	glScalef(250.0f, 250.0f, 250.0f);
+
+	// Cara 1 (frontal) 
+	glBegin(GL_QUADS);
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex3f(.5f, .5f, .5f);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex3f(.5f, -.5f, .5f);
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex3f(-.5f, -.5f, .5f);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex3f(-.5f, .5f, .5f);
+	glEnd();
+
+	//Cara 2 (izquierda)
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex3f(-.5f, .5f, .5f);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex3f(-.5f, -.5f, .5f);
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex3f(-.5f, -.5f, -.5f);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex3f(-.5f, .5f, -.5f);
+	glEnd();
+
+	//Cara 3 (trasera)
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex3f(-.5f, -.5f, -.5f);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex3f(.5f, -.5f, -.5f);
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex3f(.5f, .5f, -.5f);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex3f(-.5f, .5f, -.5f);
+	glEnd();
+
+	//Cara 4 (derecha)
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex3f(.5f, .5f, -.5f);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex3f(.5f, -.5f, -.5f);
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex3f(.5f, -.5f, .5f);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex3f(.5f, .5f, .5f);
+	glEnd();
+
+	//Cara 6 (inferior)
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex3f(-.5f, -.5f, .5f);
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex3f(.5f, -.5f, .5f);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex3f(.5f, -.5f, -.5f);
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex3f(-.5f, -.5f, -.5f);
+	glEnd();
+
+
+	glEndList();
+
+	return indice;
 }
 
 int main(int argc, char **argv) {
@@ -429,8 +511,9 @@ int main(int argc, char **argv) {
 	Iluminacion();
 
 	//Inicializacion fondo
+	
 	objetos.push_back(inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 0.0f, fondo)));
+		1.0f, 1.0f, 1.0f, 1.0f, fondo)));
 
 	// Detectar profundidad de obxetos y no dibujar caras ocultas
 	glClearDepth(1.0f);
@@ -450,8 +533,8 @@ int main(int argc, char **argv) {
 	// Color con el que se limpian los buffer
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	//Creacion del submenu de objetos
-	menus();
 	init();
+	menus();
 
 	// Empieza en bucle principal
 	glutMainLoop();
