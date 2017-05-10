@@ -18,8 +18,6 @@ int cubo;
 int esfera;
 int fondo;
 
-GLuint fondoTex[5];
-
 
 #define GL_PI 3.14f
 
@@ -54,6 +52,9 @@ enum TIPO_MENU {
 	ESFERA,
 	USER1,
 	USER2,
+	USER3,
+	USER4,
+	USER5,
 	NONE_TEXTURE,
 	COBBLESTONE,
 	BRICK,
@@ -65,6 +66,9 @@ enum TIPO_MENU {
 	PARAR_MACRO,
 	GMUSR1,
 	GMUSR2,
+	GMUSR3,
+	GMUSR4,
+	GMUSR5,
 	ROJO,
 	VERDE,
 	AZUL,
@@ -94,8 +98,8 @@ typedef struct Objeto Objeto;
 
 std::vector<Objeto> objetos;
 Objeto objFondo;
-Objeto Pers[2];
-GLboolean usrUsado[2];
+Objeto Pers[5];
+GLboolean usrUsado[5];
 int grabacion;	//Variable para hacer posibles las grabaciones
 int indUser = -1;	//Indice de la macro grabada (-1 significa sin grabar)
 float color[3];
@@ -307,6 +311,15 @@ void crearMenu(int item) {
 	case USER2:
 		colocarPersonalizado(1);
 		break;
+	case USER3:
+		colocarPersonalizado(2);
+		break;
+	case USER4:
+		colocarPersonalizado(3);
+		break;
+	case USER5:
+		colocarPersonalizado(4);
+		break;
 	case CUBO:
 		objetos.push_back(inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 			1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, cubo)));
@@ -319,13 +332,16 @@ void crearMenu(int item) {
 		if (indUser <= -1) {
 			return;
 		}
-		Pers[indUser] = inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, NULL));
-		//Itera por los objetos añadidos al vector objetos para guardarlos en la superestructura (Objeto Pers) y hace pop de ellos
-		for (objetos.size(); objetos.size() > grabacion;) {
-			Pers[indUser].hijos.push_back(objetos[objetos.size()-1]);	//Metemos el objeto mas externo en Pers
-			objetos.pop_back();	//Y lo eliminamos de objetos
+
+		if (objetos.size() > grabacion){	//Comprueba si se hicieron cambios
+			Pers[indUser] = inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, NULL));
+			//Itera por los objetos añadidos al vector objetos para guardarlos en la superestructura (Objeto Pers) y hace pop de ellos
+			for (objetos.size(); objetos.size() > grabacion;) {
+				Pers[indUser].hijos.push_back(objetos[objetos.size() - 1]);	//Metemos el objeto mas externo en Pers
+				objetos.pop_back();	//Y lo eliminamos de objetos
+			}
+			usrUsado[indUser] = TRUE; //Indica que Pers[indUser] tiene algo
 		}
-		usrUsado[indUser] = TRUE; //Indica que Pers[indUser] tiene algo
 		indUser = -1;	//Pone la variable de macro a "Sin grabacion"
 		break;
 	case GMUSR1:
@@ -334,6 +350,18 @@ void crearMenu(int item) {
 		break;
 	case GMUSR2:
 		indUser = 1;
+		grabacion = objetos.size();	//Guardamos el numero de objetos que habia en escena cuando empezamos a grabar
+		break;
+	case GMUSR3:
+		indUser = 2;
+		grabacion = objetos.size();	//Guardamos el numero de objetos que habia en escena cuando empezamos a grabar
+		break;
+	case GMUSR4:
+		indUser = 3;
+		grabacion = objetos.size();	//Guardamos el numero de objetos que habia en escena cuando empezamos a grabar
+		break;
+	case GMUSR5:
+		indUser = 4;
 		grabacion = objetos.size();	//Guardamos el numero de objetos que habia en escena cuando empezamos a grabar
 		break;
 	case ROJO:
@@ -422,6 +450,9 @@ void menus() {
 	glutAddMenuEntry("Esfera", ESFERA);
 	glutAddMenuEntry("Personalizado 1", USER1);
 	glutAddMenuEntry("Personalizado 2", USER2);
+	glutAddMenuEntry("Personalizado 3", USER3);
+	glutAddMenuEntry("Personalizado 4", USER4);
+	glutAddMenuEntry("Personalizado 5", USER5);
 
 	//Creacion del submenu de texturas
 	int menuTexturas = glutCreateMenu(crearMenu);
@@ -445,6 +476,9 @@ void menus() {
 
 	glutAddMenuEntry("Personalizado 1", GMUSR1);
 	glutAddMenuEntry("Personalizado 2", GMUSR2);
+	glutAddMenuEntry("Personalizado 3", GMUSR3);
+	glutAddMenuEntry("Personalizado 4", GMUSR4);
+	glutAddMenuEntry("Personalizado 5", GMUSR5);
 
 	//Creacion del menu de macros
 	int menuMacro = glutCreateMenu(crearMenu);

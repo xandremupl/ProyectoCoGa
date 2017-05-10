@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include<SOIL.h>
 
-extern GLuint fondoTex[5];
-
 int myCuadrado() {
 	int indice;
 	indice = glGenLists(1);
