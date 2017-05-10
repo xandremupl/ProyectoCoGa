@@ -37,6 +37,7 @@ float *moverZ;
 float *escalarX;
 float *escalarY;
 float *escalarZ;
+GLboolean luzSeparado[3] = { FALSE, FALSE, FALSE };
 
 extern GLboolean luz;
 
@@ -199,7 +200,32 @@ void cambiarColorObjeto(Objeto *objeto, float red, float green, float blue) {
 	}
 }
 
-//void activarLuz()
+void activarLuz() {
+	if (luz) {
+		glEnable(GL_LIGHTING);
+	}
+	else {
+		glDisable(GL_LIGHTING);
+	}
+	if (luzSeparado[0]) {
+		glEnable(GL_LIGHT0);
+	}
+	else {
+		glDisable(GL_LIGHT0);
+	}
+	if (luzSeparado[1]) {
+		glEnable(GL_LIGHT1);
+	}
+	else {
+		glDisable(GL_LIGHT1);
+	}
+	if (luzSeparado[2]) {
+		glEnable(GL_LIGHT2);
+	}
+	else {
+		glDisable(GL_LIGHT2);
+	}
+}
 
 // Funcion de dibukop
 void myDisplay(void) {
@@ -210,12 +236,8 @@ void myDisplay(void) {
 
 	myCamara();
 
-	if (luz) {
-		glEnable(GL_LIGHTING);
-	}
-	else {
-		glDisable(GL_LIGHTING);
-	}
+	activarLuz();
+
 	// Incluye una matriz de rotacion en todos los puntos que se dibujen
 	glMatrixMode(GL_MODELVIEW);
 	// Inicializamos la matriz del modelo a la identidad
@@ -252,6 +274,30 @@ void colocarPersonalizado(int indice) {
 
 void crearMenu(int item) {
 	switch (item) {
+	case LUZ1:
+		if (luzSeparado[0]) {
+			luzSeparado[0] = FALSE;
+		}
+		else {
+			luzSeparado[0] = TRUE;
+		}
+		break;
+	case LUZ2:
+		if (luzSeparado[1]) {
+			luzSeparado[1] = FALSE;
+		}
+		else {
+			luzSeparado[1] = TRUE;
+		}
+		break;
+	case LUZ3:
+		if (luzSeparado[2]) {
+			luzSeparado[2] = FALSE;
+		}
+		else {
+			luzSeparado[2] = TRUE;
+		}
+		break;
 	case USER1:
 		colocarPersonalizado(0);
 		break;
@@ -326,22 +372,36 @@ void Iluminacion() {
 	//Variables de luz
 
 
-	GLfloat Ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-	GLfloat Position[] = { -1.5f, 1.0f, -4.0f, 1.0f };
-	GLfloat Diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat Ambient0[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	GLfloat Position0[] = { -1.5f, 1.0f, -4.0f, 0.0f };
+	GLfloat Diffuse0[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	GLfloat Position1[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	GLfloat SpotDir1[] = { -1.0f, 0.0f, 1.0f };
+	GLfloat Diffuse1[] = { 0.0f, 1.0f, 0.0f, 1.0f };
+
+	GLfloat Position2[] = { 0.0f, 20.0f, 0.0f, 1.0f };
+	GLfloat Diffuse2[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+	GLfloat SpotDir2[] = { 5.0f, 0.0f, 5.0f };
 
 
 	//Definimos las luces
-	glLightfv(GL_LIGHT0, GL_AMBIENT, Ambient);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, Diffuse);
-	glLightfv(GL_LIGHT0, GL_POSITION, Position);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, Ambient0);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, Diffuse0);
+	glLightfv(GL_LIGHT0, GL_POSITION, Position0);
 
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, Diffuse1);
+	glLightfv(GL_LIGHT1, GL_POSITION, Position1);
+	glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, SpotDir1);
 
-	//Foco();
+	glLightfv(GL_LIGHT2, GL_DIFFUSE, Diffuse2);
+	glLightfv(GL_LIGHT2, GL_POSITION, Position2);
+	glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, SpotDir2);
 
 	//Activacion de Luces
 	glEnable(GL_LIGHT0);
-	//glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT1);
+	glEnable(GL_LIGHT2);
 
 }
 
@@ -363,9 +423,9 @@ void menus() {
 	//Creacion del submenu de iluminacion
 	int menuIluminacion = glutCreateMenu(crearMenu);
 
-	glutAddMenuEntry("Luz 1", LUZ1);
-	glutAddMenuEntry("Luz 2", LUZ2);
-	glutAddMenuEntry("Luz 3", LUZ3);
+	glutAddMenuEntry("Luz Ambiente", LUZ1);
+	glutAddMenuEntry("Luz Verde", LUZ2);
+	glutAddMenuEntry("Luz Azul", LUZ3);
 
 	//Creacion del menu de grabacion
 	int grabarMacro = glutCreateMenu(crearMenu);
