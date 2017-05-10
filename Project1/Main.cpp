@@ -18,6 +18,8 @@ int cubo;
 int esfera;
 int fondo;
 
+GLuint fondoTex[5];
+
 
 #define GL_PI 3.14f
 
@@ -65,6 +67,7 @@ enum TIPO_MENU {
 	AMARILLO,
 	MAGENTA,
 	CIAN,
+	BLANCO,
 };
 
 typedef struct {
@@ -211,6 +214,7 @@ void myDisplay(void) {
 	glPushMatrix();
 
 	//glColor3f(color[0], color[1], color[2]);
+	glBindTexture(GL_TEXTURE_2D, fondoTex[0]);
 	glTranslatef(0.0f, 0.0f, objFondo.base.pz);
 	glCallList(fondo);
 
@@ -298,6 +302,9 @@ void crearMenu(int item) {
 	case CIAN:
 		cambiarColorObjeto(&(objetos[objetos.size() - 1]), 0.0f, 1.0f, 1.0f);
 		break;
+	case BLANCO:
+		cambiarColorObjeto(&(objetos[objetos.size() - 1]), 1.0f, 1.0f, 1.0f);
+		break;
 	case NONE_TEXTURE:
 		objetos[objetos.size() - 1].base.textura = 0;
 		break;
@@ -334,10 +341,10 @@ void Iluminacion() {
 	//Foco();
 
 	//Activacion de Luces
-	glEnable(GL_LIGHT0);	//Luz
+	//glEnable(GL_LIGHT0);	//Luz
 	//glEnable(GL_LIGHT1);	//Luz Ambiente
 	glShadeModel(GL_SMOOTH); 
-	glEnable(GL_LIGHTING);
+	//glEnable(GL_LIGHTING);
 
 }
 
@@ -384,7 +391,7 @@ void menus() {
 	glutAddMenuEntry("Amarillo", AMARILLO);
 	glutAddMenuEntry("Magenta", MAGENTA);
 	glutAddMenuEntry("Cian", CIAN);
-
+	glutAddMenuEntry("Blanco", BLANCO);
 
 	//Creacion del menu principal
 	int menuPrincipal = glutCreateMenu(crearMenu);
@@ -395,6 +402,14 @@ void menus() {
 	glutAddSubMenu("Macros", menuMacro);
 	glutAddSubMenu("Color", menuColor);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
+}
+
+void init() {
+	Carga_Texturas(&fondoTex[0], "./Texturas/sky.png");
+	fondoTex[1] = fondoTex[0];
+	fondoTex[2] = fondoTex[0];
+	fondoTex[3] = fondoTex[0];
+	fondoTex[4] = fondoTex[0];
 }
 
 int main(int argc, char **argv) {
@@ -439,6 +454,7 @@ int main(int argc, char **argv) {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	//Creacion del submenu de objetos
 	menus();
+	init();
 
 	// Empieza en bucle principal
 	glutMainLoop();

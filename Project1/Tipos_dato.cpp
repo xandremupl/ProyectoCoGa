@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include<SOIL.h>
 
-
+extern GLuint fondoTex[5];
 
 int myCuadrado() {
 	int indice;
@@ -28,9 +28,11 @@ int myFondo() {
 	indice = glGenLists(1);
 	glNewList(indice, GL_COMPILE);
 
+	//glBindTexture(GL_TEXTURE_2D, fondoTex[0]);
+
 	glScalef(250.0f, 250.0f, 250.0f);
 	//Cara Fron
-	glBegin(GL_TRIANGLES);
+	glBegin(GL_QUADS);
 	glVertex3f(-.5f, -0.5f, .5f);
 	glVertex3f(.5f, .5f, .5f);
 	glVertex3f(.5f, -.5f, .5f);
@@ -69,6 +71,7 @@ int myFondo() {
 	glVertex3f(-.5, .5, -.5f);
 	glVertex3f(-.5, .5, .5f);
 
+
 	//Cara down
 
 	glVertex3f(-.5, -.5, .5f);
@@ -79,7 +82,7 @@ int myFondo() {
 	glVertex3f(.5, -.5, .5f);
 	glVertex3f(.5, -.5, -.5f);
 
-
+	//glBindTexture(GL_TEXTURE_2D, 0);
 
 	glEnd();
 
@@ -154,8 +157,6 @@ int myCubo()
 	glVertex3f(-.5, -.5, .5f);
 	glVertex3f(.5, -.5, -.5f);
 	glVertex3f(.5, -.5, .5f);
-
-
 
 	glEnd();
 
