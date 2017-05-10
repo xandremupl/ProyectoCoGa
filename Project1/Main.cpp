@@ -196,6 +196,8 @@ void cambiarColorObjeto(Objeto *objeto, float red, float green, float blue) {
 	}
 }
 
+void activarLuz()
+
 // Funcion de dibukop
 void myDisplay(void) {
 	int i;
