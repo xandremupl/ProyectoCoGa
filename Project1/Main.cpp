@@ -50,11 +50,13 @@ extern int myFondo();
 enum TIPO_MENU {
 	CUBO,
 	ESFERA,
+	FONDO,
 	USER1,
 	USER2,
 	USER3,
 	USER4,
 	USER5,
+	ELIMINAR,
 	NONE_TEXTURE,
 	COBBLESTONE,
 	BRICK,
@@ -328,6 +330,13 @@ void crearMenu(int item) {
 		objetos.push_back(inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 			5.0f, 5.0f, 5.0f, 1.0f, 1.0f, 1.0f, esfera)));
 		break;
+	case FONDO:
+		objetos.push_back(inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, fondo)));
+		break;
+	case ELIMINAR:
+		objetos.pop_back();
+		break;
 	case PARAR_MACRO:
 		if (indUser <= -1) {
 			return;
@@ -419,13 +428,13 @@ void Iluminacion() {
 	GLfloat Position0[] = { -1.5f, 1.0f, -4.0f, 1.0f };
 	GLfloat Diffuse0[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	GLfloat Position1[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	GLfloat SpotDir1[] = { -1.0f, 0.0f, 1.0f };
+	GLfloat Position1[] = { 0.0f, 0.0f, 20.0f, 1.0f };
+	GLfloat SpotDir1[] = { 0.0f, 0.0f, -20.0f };
 	GLfloat Diffuse1[] = { 0.0f, 1.0f, 0.0f, 1.0f };
 
 	GLfloat Position2[] = { 0.0f, 20.0f, 0.0f, 1.0f };
 	GLfloat Diffuse2[] = { 0.0f, 0.0f, 1.0f, 1.0f };
-	GLfloat SpotDir2[] = { 5.0f, 0.0f, 5.0f };
+	GLfloat SpotDir2[] = { 0.0f, -20.0f, 0.0f };
 
 
 	//Definimos las luces
@@ -448,11 +457,13 @@ void menus() {
 
 	glutAddMenuEntry("Cubo", CUBO);
 	glutAddMenuEntry("Esfera", ESFERA);
+	glutAddMenuEntry("Fondo", FONDO);
 	glutAddMenuEntry("Personalizado 1", USER1);
 	glutAddMenuEntry("Personalizado 2", USER2);
 	glutAddMenuEntry("Personalizado 3", USER3);
 	glutAddMenuEntry("Personalizado 4", USER4);
 	glutAddMenuEntry("Personalizado 5", USER5);
+	glutAddMenuEntry("Eliminar objeto", ELIMINAR);
 
 	//Creacion del submenu de texturas
 	int menuTexturas = glutCreateMenu(crearMenu);
