@@ -71,6 +71,7 @@ typedef struct {
 	float px, py, pz; // posicion
 	float rx, ry, rz; // angulos de giro
 	float sx, sy, sz; // escalado en los tres ejes.
+	float r, g, b; // colores
 	int listaRender; // lista de render
 	GLuint textura;	//Textura
 } ObjBase;
@@ -101,7 +102,7 @@ void Carga_Texturas(GLuint *tex, char* ruta) {
 }
 
 ObjBase inicializarObjBase(float px, float py, float pz, float rx, float ry, float rz, float sx,
-	float sy, float sz, int listaRender) {
+	float sy, float sz, float r, float g, float b, int listaRender) {
 	ObjBase objeto;
 	objeto.px = px;
 	objeto.py = py;
@@ -112,6 +113,9 @@ ObjBase inicializarObjBase(float px, float py, float pz, float rx, float ry, flo
 	objeto.sx = sx;
 	objeto.sy = sy;
 	objeto.sz = sz;
+	objeto.r = r;
+	objeto.g = g;
+	objeto.b = b;
 	objeto.listaRender = listaRender;
 	return(objeto);
 }
@@ -139,6 +143,7 @@ void dibujarObjeto(Objeto objeto) {
 		//Aplicamos transformaciones
 		glPushMatrix();
 			glBindTexture(GL_TEXTURE_2D, objeto.base.textura);
+			glColor3f(base->r, base->g, base->b);
 			glTranslatef(base->px, base->py, base->pz);
 			glRotatef(base->rx, 1.0f, 0.0f, 0.0f);
 			glRotatef(base->ry, 0.0f, 1.0f, 0.0f);
@@ -175,10 +180,18 @@ void asignarParametros() {
 	escalarZ = &(objetos[objetos.size() - 1].base.sz);
 }
 
-void cambiarColorFondo(float red, float green, float blue) {
-	color[0] = red;
-	color[1] = green;
-	color[2] = blue;
+void cambiarColorObjeto(Objeto *objeto, float red, float green, float blue) {
+	int i;
+	if (objeto->hijos.size() == 0) {	//Obj no tiene hijos
+		objeto->base.r = red;
+		objeto->base.g = green;
+		objeto->base.b = blue;
+	}
+	else {
+		for (i = 0; i < objeto->hijos.size(); i++) {
+			cambiarColorObjeto(&(objeto->hijos[i]), red, green, blue);
+		}
+	}
 }
 
 // Funcion de dibukop
@@ -197,7 +210,7 @@ void myDisplay(void) {
 
 	glPushMatrix();
 
-	glColor3f(color[0], color[1], color[2]);
+	//glColor3f(color[0], color[1], color[2]);
 	glTranslatef(0.0f, 0.0f, objFondo.base.pz);
 	glCallList(fondo);
 
@@ -244,13 +257,13 @@ void crearMenu(int item) {
 		//Estas asignacions son para que apareza no origen, temos que decidir si facer asi ou que apareza superposto
 		//ao ultimo objeto
 		objetos.push_back(inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-			1.0f, 1.0f, 1.0f, cubo)));
+			1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, cubo)));
 		break;
 	case PARAR_MACRO:
 		if (indUser <= -1) {
 			return;
 		}
-		Pers[indUser] = inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, NULL));
+		Pers[indUser] = inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, NULL));
 		//Itera por los objetos añadidos al vector objetos para guardarlos en la superestructura (Objeto Pers) y hace pop de ellos
 		for (objetos.size(); objetos.size() > grabacion;) {
 			Pers[indUser].hijos.push_back(objetos[objetos.size()-1]);	//Metemos el objeto mas externo en Pers
@@ -268,22 +281,22 @@ void crearMenu(int item) {
 		grabacion = objetos.size();	//Guardamos el numero de objetos que habia en escena cuando empezamos a grabar
 		break;
 	case ROJO:
-		cambiarColorFondo(1.0f, 0.0f, 0.0f);
+		cambiarColorObjeto(&(objetos[objetos.size()-1]), 1.0f, 0.0f, 0.0f);
 		break;
 	case VERDE:
-		cambiarColorFondo(0.0f, 1.0f, 0.0f);
+		cambiarColorObjeto(&(objetos[objetos.size() - 1]), 0.0f, 1.0f, 0.0f);
 		break;
 	case AZUL:
-		cambiarColorFondo(0.0f, 0.0f, 1.0f);
+		cambiarColorObjeto(&(objetos[objetos.size() - 1]), 0.0f, 0.0f, 1.0f);
 		break;
 	case AMARILLO:
-		cambiarColorFondo(1.0f, 1.0f, 0.0f);
+		cambiarColorObjeto(&(objetos[objetos.size() - 1]), 1.0f, 1.0f, 0.0f);
 		break;
 	case MAGENTA:
-		cambiarColorFondo(1.0f, 0.0f, 1.0f);
+		cambiarColorObjeto(&(objetos[objetos.size() - 1]), 1.0f, 0.0f, 1.0f);
 		break;
 	case CIAN:
-		cambiarColorFondo(0.0f, 1.0f, 1.0f);
+		cambiarColorObjeto(&(objetos[objetos.size() - 1]), 0.0f, 1.0f, 1.0f);
 		break;
 	case NONE_TEXTURE:
 		objetos[objetos.size() - 1].base.textura = 0;
@@ -363,7 +376,7 @@ void menus() {
 	glutAddMenuEntry("Parar", PARAR_MACRO);
 
 	//Creacion del menu del fondo
-	int menuFondo = glutCreateMenu(crearMenu);
+	int menuColor = glutCreateMenu(crearMenu);
 
 	glutAddMenuEntry("Rojo", ROJO);
 	glutAddMenuEntry("Verde", VERDE);
@@ -380,7 +393,7 @@ void menus() {
 	glutAddSubMenu("Texturas", menuTexturas);
 	glutAddSubMenu("Iluminación", menuIluminacion);
 	glutAddSubMenu("Macros", menuMacro);
-	glutAddSubMenu("Fondo", menuFondo);
+	glutAddSubMenu("Color", menuColor);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
@@ -404,8 +417,8 @@ int main(int argc, char **argv) {
 	Iluminacion();
 
 	//Inicializacion fondo
-	objFondo = inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, fondo));
-	cambiarColorFondo(1.0f, 0.0f, 0.0f);
+	objetos.push_back(inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 0.0f, 0.0f, fondo)));
 
 	// Detectar profundidad de obxetos y no dibujar caras ocultas
 	glClearDepth(1.0f);
