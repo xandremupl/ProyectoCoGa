@@ -28,60 +28,65 @@ int myFondo() {
 	indice = glGenLists(1);
 	glNewList(indice, GL_COMPILE);
 
-
 	glScalef(250.0f, 250.0f, 250.0f);
-	//Cara Fron
-	glBegin(GL_TRIANGLES);
-	glVertex3f(-.5f, -0.5f, .5f);
+	// Cara 1 (frontal) 
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(.5f, .5f, .5f);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(.5f, -.5f, .5f);
-
+	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(-.5f, -.5f, .5f);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(-.5f, .5f, .5f);
-	glVertex3f(.5f, .5f, .5f);
+	glEnd();
 
-	//Cara back
+	//Cara 2 (izquierda)
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-.5f, .5f, .5f);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-.5f, -.5f, .5f);
+	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(-.5f, -.5f, -.5f);
-	glVertex3f(.5f, -.5f, -.5f);
-	glVertex3f(.5, .5f, -.5f);
-
-
-	glVertex3f(-.5, -.5f, -.5f);
-	glVertex3f(.5f, .5f, -.5f);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(-.5f, .5f, -.5f);
+	glEnd();
 
-	//Cara derecha
-
-	glVertex3f(.5f, -.5f, .5f);
-	glVertex3f(.5f, .5f, -.5f);
+	//Cara 3 (trasera)
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-.5f, -.5f, -.5f);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(.5f, -.5f, -.5f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(.5f, .5f, -.5f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-.5f, .5f, -.5f);
+	glEnd();
 
-	glVertex3f(.5f, -.5, .5f);
-	glVertex3f(.5, .5, .5f);
-	glVertex3f(.5f, .5, -.5f);
+	//Cara 4 (derecha)
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(.5f, .5f, -.5f);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(.5f, -.5f, -.5f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(.5f, -.5f, .5f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(.5f, .5f, .5f);
+	glEnd();
 
-	//Cara izq
-	glVertex3f(-.5, -.5, .5f);
-	glVertex3f(-.5, -.5, -.5f);
-	glVertex3f(-.5, .5, .5f);
-
-
-	glVertex3f(-.5, -.5, -.5f);
-	glVertex3f(-.5, .5, -.5f);
-	glVertex3f(-.5, .5, .5f);
-
-
-	//Cara down
-
-	glVertex3f(-.5, -.5, .5f);
-	glVertex3f(.5, -.5, -.5f);
-	glVertex3f(-.5, -.5, -.5f);
-
-	glVertex3f(-.5, -.5, .5f);
-	glVertex3f(.5, -.5, .5f);
-	glVertex3f(.5, -.5, -.5f);
-
-
+	//Cara 6 (inferior)
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-.5f, -.5f, .5f);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(.5f, -.5f, .5f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(.5f, -.5f, -.5f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-.5f, -.5f, -.5f);
 	glEnd();
 
 	glEndList();
