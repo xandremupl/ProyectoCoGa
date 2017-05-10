@@ -75,6 +75,16 @@ void myTeclado(unsigned char tras, int x, int y)
 	case '5':
 		cambiarPerspectiva(FALSE, FALSE, FALSE, FALSE, TRUE);
 		break;
+	case '-':
+		*escalarX -= INCESC;
+		*escalarY -= INCESC;
+		*escalarZ -= INCESC;
+		break;
+	case '+':
+		*escalarX += INCESC;
+		*escalarY += INCESC;
+		*escalarZ += INCESC;
+		break;
 	case 'a':
 		*rotarZ -= INCRANG;
 		break;
