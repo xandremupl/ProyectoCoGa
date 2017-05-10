@@ -335,7 +335,9 @@ void crearMenu(int item) {
 			1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, fondo)));
 		break;
 	case ELIMINAR:
-		objetos.pop_back();
+		if (objetos.size() > 0) {
+			objetos.pop_back();
+		}
 		break;
 	case PARAR_MACRO:
 		if (indUser <= -1) {
