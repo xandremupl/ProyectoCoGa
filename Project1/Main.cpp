@@ -96,8 +96,8 @@ void Carga_Texturas(GLuint *tex, char* ruta) {
 	*tex = SOIL_load_OGL_texture(ruta, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glBindTexture(GL_TEXTURE_2D, *tex);
 }
 
@@ -316,6 +316,28 @@ void crearMenu(int item) {
 	return;
 }
 
+void Iluminacion() {
+	//Variables de luz
+
+	GLfloat Ambiente[4] = { .3f, .3f, .3f, .5f };	//Luz Gris
+	GLfloat LuzPos[4] = { 1.0f,1.0f, 1.0f, 0.0f };	//Luz desde arriba
+	GLfloat Difusa[4] = { .5f,.5f,.5f,.5f };
+
+
+	//Definimos las luces
+	glLightfv(GL_LIGHT0, GL_AMBIENT, Ambiente);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, Difusa);
+	glLightfv(GL_LIGHT0, GL_POSITION, LuzPos);
+
+
+	//Foco();
+
+	//Activacion de Luces
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHTING);
+
+}
+
 void menus() {
 	int menuObjetos = glutCreateMenu(crearMenu);
 
@@ -388,6 +410,8 @@ int main(int argc, char **argv) {
 	cubo = myCubo();
 	esfera = myEsfera();
 	fondo = myFondo();
+
+	Iluminacion();
 
 	//Inicializacion fondo
 	objetos.push_back(inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
