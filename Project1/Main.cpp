@@ -51,6 +51,7 @@ extern int myFondo();
 
 enum TIPO_MENU {
 	CUBO,
+	ESFERA,
 	USER1,
 	USER2,
 	NONE_TEXTURE,
@@ -308,6 +309,10 @@ void crearMenu(int item) {
 		objetos.push_back(inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 			1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, cubo)));
 		break;
+	case ESFERA:
+		objetos.push_back(inicializarObjeto(inicializarObjBase(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			5.0f, 5.0f, 5.0f, 1.0f, 1.0f, 1.0f, esfera)));
+		break;
 	case PARAR_MACRO:
 		if (indUser <= -1) {
 			return;
@@ -398,17 +403,13 @@ void Iluminacion() {
 	glLightfv(GL_LIGHT2, GL_POSITION, Position2);
 	glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, SpotDir2);
 
-	//Activacion de Luces
-	glEnable(GL_LIGHT0);
-	glEnable(GL_LIGHT1);
-	glEnable(GL_LIGHT2);
-
 }
 
 void menus() {
 	int menuObjetos = glutCreateMenu(crearMenu);
 
 	glutAddMenuEntry("Cubo", CUBO);
+	glutAddMenuEntry("Esfera", ESFERA);
 	glutAddMenuEntry("Personalizado 1", USER1);
 	glutAddMenuEntry("Personalizado 2", USER2);
 
