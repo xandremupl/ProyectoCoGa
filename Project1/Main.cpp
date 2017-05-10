@@ -36,6 +36,8 @@ float *escalarX;
 float *escalarY;
 float *escalarZ;
 
+extern GLboolean luz;
+
 //Funciones externas
 //extern AUX_RGBImageRec *Carga_BMP(char *Nome_ficheiro);
 //extern void Libera_BMP(AUX_RGBImageRec *TextureImage);
@@ -203,6 +205,12 @@ void myDisplay(void) {
 
 	myCamara();
 
+	if (luz) {
+		glEnable(GL_LIGHTING);
+	}
+	else {
+		glDisable(GL_LIGHTING);
+	}
 	// Incluye una matriz de rotacion en todos los puntos que se dibujen
 	glMatrixMode(GL_MODELVIEW);
 	// Inicializamos la matriz del modelo a la identidad
@@ -324,7 +332,7 @@ void Iluminacion() {
 
 	//Activacion de Luces
 	glEnable(GL_LIGHT0);
-	glEnable(GL_LIGHTING);
+	//glEnable(GL_LIGHTING);
 
 }
 
