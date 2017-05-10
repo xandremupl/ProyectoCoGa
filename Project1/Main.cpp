@@ -400,8 +400,8 @@ void Iluminacion() {
 	GLfloat Position0[] = { -1.5f, 1.0f, -4.0f, 1.0f };
 	GLfloat Diffuse0[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	GLfloat Position1[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	GLfloat SpotDir1[] = { -1.0f, 0.0f, 1.0f };
+	GLfloat Position1[] = { 0.0f, 0.0f, 20.0f, 1.0f };
+	GLfloat SpotDir1[] = { 0.0f, 0.0f, -20.0f };
 	GLfloat Diffuse1[] = { 0.0f, 1.0f, 0.0f, 1.0f };
 
 	GLfloat Position2[] = { 0.0f, 20.0f, 0.0f, 1.0f };
